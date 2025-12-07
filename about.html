@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>关于我 - Yankai Mao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: #f5f5f5; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 220px; background-color: #111827; color: #e5e7eb; padding: 20px 16px; box-sizing: border-box; }
+    .sidebar h1 { font-size: 20px; margin: 0 0 16px 0; }
+    .sidebar p { font-size: 12px; color: #9ca3af; margin: 0 0 16px 0; }
+    .nav { margin-top: 12px; }
+    .nav a { display: block; padding: 8px 10px; margin-bottom: 6px; border-radius: 6px; text-decoration: none; color: #e5e7eb; font-size: 14px; }
+    .nav a:hover { background-color: #1f2937; }
+    .nav a.active { background-color: #374151; }
+    .content { flex: 1; padding: 24px 32px; box-sizing: border-box; background-color: #ffffff; }
+    .content h2 { margin-top: 0; font-size: 24px; }
+    .content p { line-height: 1.6; color: #4b5563; }
+    .section { margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Yankai Mao</h1>
+      <p>CS @ Columbia · AI & Graphics</p>
+      <nav class="nav">
+        <a href="index.html">🏠 主页 Home</a>
+        <a href="about.html" class="active">👤 关于我 About</a>
+        <a href="projects.html">🧪 项目 Projects</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="section">
+        <h2>关于我</h2>
+        <p>
+          我本科毕业于上海交通大学计算机系，之前在网易游戏做游戏引擎 / 物理系统开发，
+          目前在 Columbia University 攻读计算机科学硕士，主要关注：
+        </p>
+        <ul>
+          <li>大模型（LLM / MoE）训练与优化</li>
+          <li>生成式 AI（尤其是 Diffusion / 图像生成）</li>
+          <li>计算机图形学 / 实时渲染 / 物理模拟</li>
+          <li>高性能系统与工程（C++ / CUDA / 并行）</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>背景简述</h3>
+        <p>
+          在网易期间主要做实时物理、约束系统、性能优化等工作，对高性能 C++、
+          内存布局、并行任务系统比较熟悉。现在更多在做与大模型、生成式 AI 相关的东西，
+          希望把“传统图形学 + 现代 AI”结合起来做一些新的东西。
+        </p>
+      </div>
+
+      <div class="section">
+        <h3>联系我</h3>
+        <p>
+          （这里可以之后加上你的邮箱、LinkedIn、GitHub 等）
+        </p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

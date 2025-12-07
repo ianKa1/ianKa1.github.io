@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>主页 - Yankai Mao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #111827;
+      color: #e5e7eb;
+      padding: 20px 16px;
+      box-sizing: border-box;
+    }
+
+    .sidebar h1 {
+      font-size: 20px;
+      margin: 0 0 16px 0;
+    }
+
+    .sidebar p {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 0 0 16px 0;
+    }
+
+    .nav {
+      margin-top: 12px;
+    }
+
+    .nav a {
+      display: block;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+
+    .nav a:hover {
+      background-color: #1f2937;
+    }
+
+    .nav a.active {
+      background-color: #374151;
+    }
+
+    .content {
+      flex: 1;
+      padding: 24px 32px;
+      box-sizing: border-box;
+      background-color: #ffffff;
+    }
+
+    .content h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .content p {
+      line-height: 1.6;
+      color: #4b5563;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background-color: #eef2ff;
+      color: #4f46e5;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- 左侧侧边栏 -->
+    <aside class="sidebar">
+      <h1>Yankai Mao</h1>
+      <p>CS @ Columbia · AI & Graphics</p>
+
+      <nav class="nav">
+        <a href="index.html" class="active">🏠 主页 Home</a>
+        <a href="about.html">👤 关于我 About</a>
+        <a href="projects.html">🧪 项目 Projects</a>
+      </nav>
+    </aside>
+
+    <!-- 右侧内容 -->
+    <main class="content">
+      <div class="section">
+        <h2>Hi 👋</h2>
+        <p>
+          这是我的个人网站主页（静态版），后面会慢慢加上更多内容，比如 AI / 图形学项目展示、Blog、Demo 等。
+        </p>
+        <p>
+          目前：M.S. in Computer Science @ Columbia University，方向包括：
+        </p>
+        <p>
+          <span class="tag">Large Language Models</span>
+          <span class="tag">Generative AI</span>
+          <span class="tag">Computer Graphics</span>
+          <span class="tag">High-performance Systems</span>
+        </p>
+      </div>
+
+      <div class="section">
+        <h3>近期在做的事情</h3>
+        <ul>
+          <li>训练 / 微调小型 Stable Diffusion / Diffusion 模型</li>
+          <li>MoE 模型剪枝、路由相关实验</li>
+          <li>把 AI & 图形学结合起来做一些 demo / 工具</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>接下来会加的内容</h3>
+        <ul>
+          <li>Project 页：展示过往项目、论文/课程 Project</li>
+          <li>Blog 或 Notes：记录一些 AI / Graphics / System 的想法</li>
+          <li>交互 Demo：比如流体 / 3D / Shader 小玩具</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

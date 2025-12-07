@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>项目 - Yankai Mao</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: #f5f5f5; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 220px; background-color: #111827; color: #e5e7eb; padding: 20px 16px; box-sizing: border-box; }
+    .sidebar h1 { font-size: 20px; margin: 0 0 16px 0; }
+    .sidebar p { font-size: 12px; color: #9ca3af; margin: 0 0 16px 0; }
+    .nav { margin-top: 12px; }
+    .nav a { display: block; padding: 8px 10px; margin-bottom: 6px; border-radius: 6px; text-decoration: none; color: #e5e7eb; font-size: 14px; }
+    .nav a:hover { background-color: #1f2937; }
+    .nav a.active { background-color: #374151; }
+    .content { flex: 1; padding: 24px 32px; box-sizing: border-box; background-color: #ffffff; }
+    .content h2 { margin-top: 0; font-size: 24px; }
+    .content p { line-height: 1.6; color: #4b5563; }
+    .section { margin-bottom: 24px; }
+    .project-card {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      background-color: #f9fafb;
+    }
+    .project-card h3 {
+      margin: 0 0 6px 0;
+      font-size: 18px;
+    }
+    .project-card p {
+      margin: 0;
+      font-size: 14px;
+      color: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Yankai Mao</h1>
+      <p>CS @ Columbia · AI & Graphics</p>
+      <nav class="nav">
+        <a href="index.html">🏠 主页 Home</a>
+        <a href="about.html">👤 关于我 About</a>
+        <a href="projects.html" class="active">🧪 项目 Projects</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h2>项目 Projects</h2>
+      <p>下面是一些占位示例，你之后可以替换成自己的项目。</p>
+
+      <div class="project-card">
+        <h3>Mini Stable Diffusion</h3>
+        <p>从零实现一个小型 text-to-image diffusion 模型，用于课程 / 实验，探索 UNet 结构、scheduler、LoRA 微调等。</p>
+      </div>
+
+      <div class="project-card">
+        <h3>MoE Router Pruning</h3>
+        <p>在 MoE 大模型上做路由剪枝与专家剪枝实验，尝试减少计算开销，同时保持性能。</p>
+      </div>
+
+      <div class="project-card">
+        <h3>Real-time Physics Module (Game Engine)</h3>
+        <p>在网易参与开发的实时物理模块，包括绳索模拟、约束系统、并行加速等，用于游戏内高性能运行。</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
