@@ -77,6 +77,7 @@
 .item[data-category="systems"] .accent { background: var(--systems-blue-deep); }
 .item[data-category="words"] .accent { background: var(--words-red-deep); }
 .item[data-category="visuals"] .accent { background: var(--visuals-pink-deep); }
+.item[data-category="traces"] .accent { background: var(--traces-ink-deep); }
 
 .item:hover .label,
 .item.active .label {
@@ -97,6 +98,8 @@
 .item[data-category="words"].active .label { color: var(--words-red-deep); }
 .item[data-category="visuals"]:hover .label,
 .item[data-category="visuals"].active .label { color: var(--visuals-pink-deep); }
+.item[data-category="traces"]:hover .label,
+.item[data-category="traces"].active .label { color: var(--traces-ink-deep); }
 
 .footer {
   margin-top: auto;

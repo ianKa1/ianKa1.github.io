@@ -180,6 +180,28 @@ export function Content({ activeCategory }: ContentProps) {
               <Gallery images={galleryImages} />
             </motion.section>
           )}
+
+          {activeCategory === 'traces' && (
+            <motion.section
+              key="traces"
+              className={styles.section}
+              data-section="traces"
+              variants={contentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <h1 className={styles.title}>Traces</h1>
+              <p className={styles.text}>
+                Places I've inhabited, however briefly. Each mark on the map
+                is a chapter read in the language of a city.
+              </p>
+              <div className={styles.mapPlaceholder}>
+                <p>World map coming soon</p>
+              </div>
+            </motion.section>
+          )}
         </AnimatePresence>
       </div>
     </main>

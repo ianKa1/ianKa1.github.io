@@ -9,10 +9,12 @@
   /* Pastel accents — pigment-rich but soft */
   --systems-blue: #A8C5E2;
   --systems-blue-deep: #7BA3CC;
-  --words-red: #E2A8A8;
-  --words-red-deep: #CC7B7B;
+  --words-red: #E2B0B0;
+  --words-red-deep: #C45C5C;
   --visuals-pink: #E2C5D8;
   --visuals-pink-deep: #CC9FBA;
+  --traces-ink: #A3A3A3;
+  --traces-ink-deep: #4A4A4A;
   --entry-cream: #F5F0E8;
   --entry-warm: #EDE5D8;
 
