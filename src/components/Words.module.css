@@ -2,6 +2,11 @@
    WORDS — Voice & Index
    Editorial layout: top section reads like a magazine spread,
    bottom section reads like the back-of-book library index.
+
+   CJK SUPPORT — Chinese (and other CJK) glyphs in this section
+   fall back through Noto Serif/Sans SC, which Google Fonts ships
+   with proper `unicode-range` subsetting so the CJK fonts only
+   download when a CJK glyph is actually used on the page.
    ============================================================ */
 
 .root {
@@ -9,6 +14,247 @@
   display: flex;
   flex-direction: column;
   gap: 5rem;
+  /* Scope CJK fallbacks to Words. The Latin fonts win for Latin glyphs
+     thanks to browsers' per-character font shaping. */
+  font-family:
+    var(--font-body),
+    'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+/* Pull Voice closer to the Contents masthead — they read as a single
+   intro unit, so the first article peeks above the fold. */
+.contents + .section {
+  margin-top: -2rem;
+}
+
+/* ============================================================
+   CONTENTS — masthead / table-of-contents
+   Sits above Voice so readers see at-a-glance what's on the page,
+   and can click to jump straight to Index. Styled as a hand-set
+   magazine contents page.
+   ============================================================ */
+
+.contents {
+  position: relative;
+  padding: 1.4rem 1.5rem 1.25rem;
+  border-top: 1px solid rgba(196, 92, 92, 0.35);
+  border-bottom: 1px solid rgba(196, 92, 92, 0.35);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(196, 92, 92, 0.04), transparent 70%);
+}
+
+/* Hair-thin decorative top double-rule, classic editorial cue. */
+.contents::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(196, 92, 92, 0) 0%,
+    rgba(196, 92, 92, 0.5) 20%,
+    rgba(196, 92, 92, 0.5) 80%,
+    rgba(196, 92, 92, 0) 100%
+  );
+}
+
+.contentsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.1rem;
+}
+
+.contentsLabel {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--words-red-deep);
+  padding-left: 0.45em; /* compensate for letter-spacing offset */
+}
+
+.contentsIssue {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.contentsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.contentsItem {
+  display: block;
+}
+
+.contentsLink {
+  display: grid;
+  grid-template-columns: 2.25rem 1fr auto;
+  align-items: baseline;
+  gap: 0.9rem;
+  padding: 0.55rem 0.25rem;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 1px;
+  transition: background var(--transition-fast), padding var(--transition-fast);
+  cursor: pointer;
+}
+
+.contentsLink:hover,
+.contentsLink:focus-visible {
+  background: rgba(196, 92, 92, 0.045);
+  padding-left: 0.55rem;
+  outline: none;
+}
+
+.contentsRoman {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--words-red-deep);
+  letter-spacing: 0.02em;
+  text-align: center;
+  line-height: 1;
+  opacity: 0.85;
+  transition: opacity var(--transition-fast), transform var(--transition-medium);
+}
+
+.contentsLink:hover .contentsRoman,
+.contentsLink:focus-visible .contentsRoman {
+  opacity: 1;
+  transform: translateX(-2px);
+}
+
+.contentsBody {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.contentsTitle {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+
+/* Classic dotted leader between title and kicker — magazine TOC tell. */
+.contentsLeader {
+  align-self: end;
+  height: 1px;
+  margin-bottom: 0.42em;
+  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.32) 0.5px, transparent 0.5px);
+  background-size: 4px 1px;
+  background-repeat: repeat-x;
+  background-position: 0 50%;
+  opacity: 0.55;
+}
+
+.contentsKicker {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contentsKicker em {
+  font-style: italic;
+  color: var(--words-red-deep);
+  opacity: 0.85;
+  margin-left: 0.1em;
+}
+
+.contentsCount {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+
+.contentsLink:hover .contentsCount,
+.contentsLink:focus-visible .contentsCount {
+  color: var(--words-red-deep);
+}
+
+/* Soft "begin" wayfinder under the contents block. */
+.contentsHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+  margin-left: 0.25rem;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast), letter-spacing var(--transition-medium);
+}
+
+.contentsHint:hover {
+  color: var(--words-red-deep);
+  letter-spacing: 0.36em;
+}
+
+.contentsHintArrow {
+  display: inline-block;
+  width: 1.6rem;
+  height: 1px;
+  background: currentColor;
+  position: relative;
+  opacity: 0.7;
+}
+
+.contentsHintArrow::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* Subtle bobbing animation on the wayfinder arrow. */
+@media (prefers-reduced-motion: no-preference) {
+  .contentsHintArrow {
+    animation: contentsBob 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes contentsBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
 }
 
 /* ---------- Section heading: small-caps with hairline rules ---------- */
@@ -84,7 +330,9 @@
 }
 
 .articleTitle {
-  font-family: var(--font-display);
+  font-family:
+    var(--font-display),
+    'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
   font-weight: 400;
   font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   line-height: 1.15;
@@ -198,7 +446,9 @@
 }
 
 .indexYearLabel {
-  font-family: var(--font-display);
+  font-family:
+    var(--font-display),
+    'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
   font-size: 1.5rem;
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -273,14 +523,29 @@
 }
 
 .bookAuthor {
-  font-family: var(--font-body);
+  font-family:
+    var(--font-body),
+    'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   color: var(--text-primary);
   font-size: 0.875rem;
   letter-spacing: 0.005em;
 }
 
-.bookTitle {
+/* English author tucked after a CJK author. Smaller, lighter, italic —
+   reads as a parenthetical romanization without the noise of parens. */
+.bookAuthorEn {
   font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  margin-left: 0.15rem;
+}
+
+.bookTitle {
+  font-family:
+    var(--font-display),
+    'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
   font-size: 1.0625rem;
   color: var(--text-primary);
   line-height: 1.4;
@@ -288,6 +553,33 @@
 
 .bookTitle em {
   font-style: italic;
+}
+
+/* Bilingual: `中文 · English`. The English nests after the Chinese in a
+   smaller italic, separated by a hair-spaced middle-dot — a quiet,
+   bookish cue that reads as one title in two scripts. */
+.bookTitleEn {
+  display: inline;
+  white-space: normal;
+  margin-left: 0.4rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  letter-spacing: 0.005em;
+}
+
+.bookTitleEn em {
+  font-style: italic;
+}
+
+.bookTitleEnSep {
+  display: inline-block;
+  margin-right: 0.4rem;
+  color: var(--words-red-deep);
+  opacity: 0.55;
+  font-style: normal;
+  transform: translateY(-0.05em);
 }
 
 .bookNote {
@@ -316,6 +608,44 @@
 @media (max-width: 700px) {
   .root {
     gap: 3.5rem;
+  }
+
+  .contents {
+    padding: 1.1rem 1rem 1rem;
+  }
+
+  .contentsLink {
+    grid-template-columns: 1.5rem 1fr auto;
+    gap: 0.7rem;
+    padding: 0.5rem 0.2rem;
+  }
+
+  .contentsRoman {
+    font-size: 1.1rem;
+  }
+
+  .contentsBody {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+
+  .contentsTitle {
+    font-size: 1.35rem;
+  }
+
+  .contentsLeader {
+    display: none;
+  }
+
+  .contentsKicker {
+    font-size: 0.82rem;
+  }
+
+  .contentsCount {
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    align-self: start;
+    padding-top: 0.35rem;
   }
 
   .articleList {

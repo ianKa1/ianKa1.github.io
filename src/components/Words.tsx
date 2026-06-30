@@ -3,6 +3,15 @@ import { articles } from '../data/articles';
 import { bookGroups } from '../data/books';
 import styles from './Words.module.css';
 
+/** Smooth-scroll handler that respects reduced-motion. */
+function scrollToId(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  e.preventDefault();
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+}
+
 /** Format an ISO date as `15 April 2026`. */
 function formatLongDate(iso: string): string {
   const d = new Date(iso);
@@ -22,8 +31,76 @@ function formatYear(iso: string): string {
 }
 
 export function Words() {
+  const articleCount = articles.length;
+  const volumeCount = bookGroups.reduce((sum, g) => sum + g.books.length, 0);
+  const yearCount = bookGroups.filter((g) => g.year !== null).length;
+
   return (
     <div className={styles.root}>
+      {/* ====================== CONTENTS — masthead ====================== */}
+      <motion.nav
+        className={styles.contents}
+        aria-label="Page contents"
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
+      >
+        <div className={styles.contentsHead}>
+          <span className={styles.contentsLabel}>Contents</span>
+          <span className={styles.contentsIssue}>
+            <span aria-hidden="true">№</span> {String(articleCount + volumeCount).padStart(2, '0')}
+          </span>
+        </div>
+
+        <ol className={styles.contentsList}>
+          <li className={styles.contentsItem}>
+            <a
+              className={styles.contentsLink}
+              href="#words-voice"
+              onClick={(e) => scrollToId(e, 'words-voice')}
+            >
+              <span className={styles.contentsRoman} aria-hidden="true">I</span>
+              <span className={styles.contentsBody}>
+                <span className={styles.contentsTitle}>Voice</span>
+                <span className={styles.contentsLeader} aria-hidden="true" />
+                <span className={styles.contentsKicker}>essays, notes, marginalia</span>
+              </span>
+              <span className={styles.contentsCount}>
+                {String(articleCount).padStart(2, '0')} {articleCount === 1 ? 'article' : 'articles'}
+              </span>
+            </a>
+          </li>
+          <li className={styles.contentsItem}>
+            <a
+              className={styles.contentsLink}
+              href="#words-index"
+              onClick={(e) => scrollToId(e, 'words-index')}
+            >
+              <span className={styles.contentsRoman} aria-hidden="true">II</span>
+              <span className={styles.contentsBody}>
+                <span className={styles.contentsTitle}>Index</span>
+                <span className={styles.contentsLeader} aria-hidden="true" />
+                <span className={styles.contentsKicker}>
+                  a working library {yearCount > 0 && <em>· {yearCount} {yearCount === 1 ? 'year' : 'years'}</em>}
+                </span>
+              </span>
+              <span className={styles.contentsCount}>
+                {String(volumeCount).padStart(2, '0')} {volumeCount === 1 ? 'volume' : 'volumes'}
+              </span>
+            </a>
+          </li>
+        </ol>
+
+        <a
+          className={styles.contentsHint}
+          href="#words-voice"
+          onClick={(e) => scrollToId(e, 'words-voice')}
+        >
+          <span className={styles.contentsHintArrow} aria-hidden="true" />
+          <span>begin</span>
+        </a>
+      </motion.nav>
+
       {/* ====================== VOICE ====================== */}
       <section className={styles.section} aria-labelledby="words-voice">
         <header className={styles.sectionHeader}>
@@ -108,9 +185,20 @@ export function Words() {
                 {group.books.map((book, bi) => (
                   <li key={`${book.title}-${book.author}`} className={styles.bookRow}>
                     <span className={styles.bookNum}>{String(bi + 1).padStart(2, '0')}</span>
-                    <span className={styles.bookAuthor}>{book.author}</span>
+                    <span className={styles.bookAuthor}>
+                      {book.author}
+                      {book.authorEn && (
+                        <span className={styles.bookAuthorEn} lang="en"> {book.authorEn}</span>
+                      )}
+                    </span>
                     <span className={styles.bookTitle}>
                       <em>{book.title}</em>
+                      {book.titleEn && (
+                        <span className={styles.bookTitleEn} lang="en">
+                          <span className={styles.bookTitleEnSep} aria-hidden="true">·</span>
+                          <em>{book.titleEn}</em>
+                        </span>
+                      )}
                       {book.note && <span className={styles.bookNote}>— {book.note}</span>}
                     </span>
                     {book.finished && (
