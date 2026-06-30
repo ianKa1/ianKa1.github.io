@@ -8,12 +8,13 @@ import { WorldMap, type Place } from './WorldMap';
 import styles from './Content.module.css';
 
 // Sample places for the map demo - replace with your actual places
+// Coordinates are [longitude, latitude]
 const samplePlaces: Place[] = [
-  { name: 'Tokyo', coordinates: [795, 165], visited: '2023' },
-  { name: 'Paris', coordinates: [470, 130], visited: '2022' },
-  { name: 'New York', coordinates: [250, 155], visited: '2021' },
-  { name: 'Sydney', coordinates: [830, 380], visited: '2020' },
-  { name: 'London', coordinates: [458, 115], visited: '2019' },
+  { name: 'Tokyo', coordinates: [139.6917, 35.6895], visited: '2023' },
+  { name: 'Paris', coordinates: [2.3522, 48.8566], visited: '2022' },
+  { name: 'New York', coordinates: [-74.006, 40.7128], visited: '2021' },
+  { name: 'Sydney', coordinates: [151.2093, -33.8688], visited: '2020' },
+  { name: 'London', coordinates: [-0.1276, 51.5074], visited: '2019' },
 ];
 
 // Gallery images
