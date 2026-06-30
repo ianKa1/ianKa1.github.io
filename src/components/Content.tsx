@@ -4,18 +4,9 @@ import type { Category, Project } from '../types';
 import { Gallery, type GalleryImage } from './Gallery';
 import { ProjectGrid } from './ProjectGrid';
 import { ProjectDetail } from './ProjectDetail';
-import { WorldMap, type Place } from './WorldMap';
+import { InteractiveMap } from './InteractiveMap';
+import { places } from '../data/places';
 import styles from './Content.module.css';
-
-// Sample places for the map demo - replace with your actual places
-// Coordinates are [longitude, latitude]
-const samplePlaces: Place[] = [
-  { name: 'Tokyo', coordinates: [139.6917, 35.6895], visited: '2023' },
-  { name: 'Paris', coordinates: [2.3522, 48.8566], visited: '2022' },
-  { name: 'New York', coordinates: [-74.006, 40.7128], visited: '2021' },
-  { name: 'Sydney', coordinates: [151.2093, -33.8688], visited: '2020' },
-  { name: 'London', coordinates: [-0.1276, 51.5074], visited: '2019' },
-];
 
 // Gallery images
 const galleryImages: GalleryImage[] = [
@@ -208,11 +199,7 @@ export function Content({ activeCategory }: ContentProps) {
                 Places I've inhabited, however briefly. Each mark on the map
                 is a chapter read in the language of a city.
               </p>
-              <div className={styles.mapVariants}>
-                <WorldMap variant="ink" places={samplePlaces} title="Ink & Parchment" />
-                <WorldMap variant="constellation" places={samplePlaces} title="Constellation" />
-                <WorldMap variant="watercolor" places={samplePlaces} title="Watercolor Wash" />
-              </div>
+              <InteractiveMap places={places} />
             </motion.section>
           )}
         </AnimatePresence>
