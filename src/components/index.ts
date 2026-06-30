@@ -6,3 +6,5 @@ export type { GalleryImage } from './Gallery';
 export { ProjectCard } from './ProjectCard';
 export { ProjectGrid } from './ProjectGrid';
 export { ProjectDetail } from './ProjectDetail';
+export { WorldMap } from './WorldMap';
+export type { Place } from './WorldMap';

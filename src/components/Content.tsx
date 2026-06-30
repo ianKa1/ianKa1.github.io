@@ -4,7 +4,17 @@ import type { Category, Project } from '../types';
 import { Gallery, type GalleryImage } from './Gallery';
 import { ProjectGrid } from './ProjectGrid';
 import { ProjectDetail } from './ProjectDetail';
+import { WorldMap, type Place } from './WorldMap';
 import styles from './Content.module.css';
+
+// Sample places for the map demo - replace with your actual places
+const samplePlaces: Place[] = [
+  { name: 'Tokyo', coordinates: [795, 165], visited: '2023' },
+  { name: 'Paris', coordinates: [470, 130], visited: '2022' },
+  { name: 'New York', coordinates: [250, 155], visited: '2021' },
+  { name: 'Sydney', coordinates: [830, 380], visited: '2020' },
+  { name: 'London', coordinates: [458, 115], visited: '2019' },
+];
 
 // Gallery images
 const galleryImages: GalleryImage[] = [
@@ -197,8 +207,10 @@ export function Content({ activeCategory }: ContentProps) {
                 Places I've inhabited, however briefly. Each mark on the map
                 is a chapter read in the language of a city.
               </p>
-              <div className={styles.mapPlaceholder}>
-                <p>World map coming soon</p>
+              <div className={styles.mapVariants}>
+                <WorldMap variant="ink" places={samplePlaces} title="Ink & Parchment" />
+                <WorldMap variant="constellation" places={samplePlaces} title="Constellation" />
+                <WorldMap variant="watercolor" places={samplePlaces} title="Watercolor Wash" />
               </div>
             </motion.section>
           )}
