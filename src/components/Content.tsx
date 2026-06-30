@@ -5,6 +5,7 @@ import { Gallery, type GalleryImage } from './Gallery';
 import { ProjectGrid } from './ProjectGrid';
 import { ProjectDetail } from './ProjectDetail';
 import { InteractiveMap } from './InteractiveMap';
+import { Words } from './Words';
 import { places } from '../data/places';
 import styles from './Content.module.css';
 
@@ -155,10 +156,7 @@ export function Content({ activeCategory }: ContentProps) {
                 philosophy, essays that changed how I see things, and my own attempts
                 to articulate ideas.
               </p>
-              <p className={styles.text}>
-                Currently reading widely across fiction, critical theory,
-                and whatever catches my attention in the margins.
-              </p>
+              <Words />
             </motion.section>
           )}
 

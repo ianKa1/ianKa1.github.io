@@ -8,3 +8,4 @@ export { ProjectGrid } from './ProjectGrid';
 export { ProjectDetail } from './ProjectDetail';
 export { InteractiveMap } from './InteractiveMap';
 export type { Place } from './InteractiveMap';
+export { Words } from './Words';
