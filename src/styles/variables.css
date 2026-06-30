@@ -1,0 +1,50 @@
+:root {
+  /* Neutral foundation */
+  --bg-base: #F7F6F3;
+  --bg-warm: #FAF9F6;
+  --text-primary: #2C2C2C;
+  --text-secondary: #6B6B6B;
+  --text-muted: #9A9A9A;
+
+  /* Pastel accents — pigment-rich but soft */
+  --systems-blue: #A8C5E2;
+  --systems-blue-deep: #7BA3CC;
+  --words-red: #E2A8A8;
+  --words-red-deep: #CC7B7B;
+  --visuals-pink: #E2C5D8;
+  --visuals-pink-deep: #CC9FBA;
+  --entry-cream: #F5F0E8;
+  --entry-warm: #EDE5D8;
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+
+  /* Spacing */
+  --nav-width: 280px;
+  --content-padding: clamp(2rem, 5vw, 4rem);
+
+  /* Transitions */
+  --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-medium: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive nav width for large screens */
+@media (min-width: 1400px) {
+  :root {
+    --nav-width: 320px;
+  }
+}
+
+@media (min-width: 1800px) {
+  :root {
+    --nav-width: 360px;
+  }
+}
+
+@media (min-width: 2400px) {
+  :root {
+    --nav-width: 420px;
+  }
+}

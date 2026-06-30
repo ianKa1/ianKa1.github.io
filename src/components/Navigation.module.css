@@ -1,0 +1,248 @@
+.nav {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: var(--nav-width);
+  height: 100vh;
+  padding: var(--content-padding);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.header {
+  margin-bottom: 4rem;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+}
+
+.tagline {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.categories {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item {
+  position: relative;
+  padding: 1rem 0;
+  cursor: pointer;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 300;
+  color: var(--text-secondary);
+  transition: all var(--transition-medium);
+  position: relative;
+  display: inline-block;
+}
+
+.number {
+  position: absolute;
+  left: -1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: all var(--transition-fast);
+}
+
+.accent {
+  position: absolute;
+  left: 0;
+  bottom: 0.5rem;
+  height: 2px;
+  background: var(--entry-warm);
+}
+
+.item[data-category="entry"] .accent { background: var(--entry-warm); }
+.item[data-category="systems"] .accent { background: var(--systems-blue-deep); }
+.item[data-category="words"] .accent { background: var(--words-red-deep); }
+.item[data-category="visuals"] .accent { background: var(--visuals-pink-deep); }
+
+.item:hover .label,
+.item.active .label {
+  color: var(--text-primary);
+  transform: translateX(0.5rem);
+}
+
+.item:hover .number,
+.item.active .number {
+  opacity: 1;
+}
+
+.item[data-category="entry"]:hover .label,
+.item[data-category="entry"].active .label { color: #8B7355; }
+.item[data-category="systems"]:hover .label,
+.item[data-category="systems"].active .label { color: var(--systems-blue-deep); }
+.item[data-category="words"]:hover .label,
+.item[data-category="words"].active .label { color: var(--words-red-deep); }
+.item[data-category="visuals"]:hover .label,
+.item[data-category="visuals"].active .label { color: var(--visuals-pink-deep); }
+
+.footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.links {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.link {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color var(--transition-fast);
+}
+
+.link:hover {
+  color: var(--text-primary);
+}
+
+@media (max-width: 900px) {
+  .nav {
+    width: 220px;
+  }
+
+  .label {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .nav {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .categories {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0 2rem;
+  }
+
+  .item {
+    padding: 0.5rem 0;
+  }
+
+  .label {
+    font-size: 1.25rem;
+  }
+
+  .number {
+    display: none;
+  }
+
+  .footer {
+    display: none;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+  .nav {
+    width: 320px;
+  }
+
+  .name {
+    font-size: 1.75rem;
+  }
+
+  .label {
+    font-size: 2rem;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1800px) {
+  .nav {
+    width: 360px;
+    padding: 4rem;
+  }
+
+  .name {
+    font-size: 2rem;
+  }
+
+  .tagline {
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+  }
+
+  .header {
+    margin-bottom: 5rem;
+  }
+
+  .label {
+    font-size: 2.25rem;
+  }
+
+  .item {
+    padding: 1.25rem 0;
+  }
+
+  .link {
+    font-size: 0.875rem;
+  }
+}
+
+/* Ultra-wide displays */
+@media (min-width: 2400px) {
+  .nav {
+    width: 420px;
+    padding: 5rem;
+  }
+
+  .name {
+    font-size: 2.25rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+
+  .header {
+    margin-bottom: 6rem;
+  }
+
+  .label {
+    font-size: 2.5rem;
+  }
+
+  .item {
+    padding: 1.5rem 0;
+  }
+
+  .link {
+    font-size: 1rem;
+  }
+}
