@@ -1,5 +1,16 @@
 import articlesMarkdown from './articles.md?raw';
 
+// Auto-load every long-form article file from ./articles/*.md. Each file is
+// a single self-contained article whose metadata (Title, Date, Reading, Link)
+// sits at the top of the file, followed by a blank line and the body.
+// Files whose basename starts with `_` are ignored so authors can keep
+// scratchpads or templates next to real posts.
+const longFormFiles = import.meta.glob<string>('./articles/*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
 export interface Article {
   /** Heading text — e.g. "On the geometry of cities". */
   title: string;
@@ -17,19 +28,64 @@ export interface Article {
 }
 
 /**
- * Parse `articles.md`. Each `## Title` heading opens an article. Lines that
- * look like `Key: Value` after the heading are pulled into metadata; everything
- * after the first blank line is collected as the article body, broken into
- * paragraphs on blank lines. A single line of `---` splits the body into
- * `excerpt` (card preview) and `body` (reader-only continuation).
+ * Split raw body lines into `excerpt` (card preview) and `body`
+ * (reader-only continuation) on a lone `---` line. Blank lines break
+ * paragraphs; adjacent non-blank lines are joined with a single space.
  *
- * The first `## ` block under a non-content heading (e.g. `## Format`) is
- * filtered out by requiring a `Date:` field — articles without a date are
- * silently dropped, matching the loader's contract.
+ * Safety net: if the author never wrote a `---` but the article has more
+ * than one paragraph, treat the first paragraph as the intro and shove
+ * the rest into `body` so long essays don't dump inline on the Words page.
+ */
+function splitExcerptBody(lines: string[]): { excerpt: string[]; body: string[] } {
+  const excerpt: string[] = [];
+  const body: string[] = [];
+  let target = excerpt;
+  let sawSeparator = false;
+  let buf: string[] = [];
+  const flushBuf = () => {
+    if (buf.length) {
+      target.push(buf.join(' '));
+      buf = [];
+    }
+  };
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === '---') {
+      flushBuf();
+      target = body;
+      sawSeparator = true;
+      continue;
+    }
+    if (trimmed === '') {
+      flushBuf();
+    } else {
+      buf.push(trimmed);
+    }
+  }
+  flushBuf();
+
+  if (!sawSeparator && excerpt.length > 1) {
+    const [first, ...rest] = excerpt;
+    return { excerpt: [first], body: rest };
+  }
+  return { excerpt, body };
+}
+
+/**
+ * Parse the multi-article `articles.md` file. Each `## Title` heading opens
+ * a new article; lines that look like `Key: Value` under the heading are
+ * pulled into metadata, and everything after the first blank line becomes
+ * the body (splittable on `---`).
+ *
+ * The `## Format` block is filtered out because it has no `Date:` field —
+ * articles without a date are silently dropped.
  */
 function parseArticlesMarkdown(md: string): Article[] {
   const articles: Article[] = [];
-  const lines = md.split(/\r?\n/);
+  // Strip HTML comments (including multi-line) so `<!-- ... -->` can be used
+  // to hide draft articles in this file without confusing the `##` scanner.
+  const stripped = md.replace(/<!--[\s\S]*?-->/g, '');
+  const lines = stripped.split(/\r?\n/);
 
   let current: {
     title: string;
@@ -45,34 +101,7 @@ function parseArticlesMarkdown(md: string): Article[] {
       current = null;
       return;
     }
-    // Collapse runs of blank body lines into paragraph breaks. A lone `---`
-    // marks the excerpt/body cut; paragraphs before it are the card preview,
-    // paragraphs after are shown only in the reader.
-    const excerpt: string[] = [];
-    const body: string[] = [];
-    let target = excerpt;
-    let buf: string[] = [];
-    const flushBuf = () => {
-      if (buf.length) {
-        target.push(buf.join(' '));
-        buf = [];
-      }
-    };
-    for (const line of current.body) {
-      const trimmed = line.trim();
-      if (trimmed === '---') {
-        flushBuf();
-        target = body;
-        continue;
-      }
-      if (trimmed === '') {
-        flushBuf();
-      } else {
-        buf.push(trimmed);
-      }
-    }
-    flushBuf();
-
+    const { excerpt, body } = splitExcerptBody(current.body);
     articles.push({
       title: current.title,
       date,
@@ -119,10 +148,72 @@ function parseArticlesMarkdown(md: string): Article[] {
   }
 
   flush();
-
-  // Most recent first (string comparison works for ISO dates).
-  articles.sort((a, b) => b.date.localeCompare(a.date));
   return articles;
 }
 
-export const articles: Article[] = parseArticlesMarkdown(articlesMarkdown);
+/**
+ * Parse a single standalone article file from `src/data/articles/`. The
+ * whole file uses the same metadata + body grammar as one block inside
+ * `articles.md`, but with a required `Title:` key instead of an `## H2`
+ * heading (the filename is opaque — title comes from front-matter).
+ *
+ * Returns `null` (and logs in dev) when the file is missing `Title:` or
+ * `Date:`, so a half-drafted file never renders as a broken card.
+ */
+function parseArticleFile(md: string, source: string): Article | null {
+  const meta: Record<string, string> = {};
+  const bodyLines: string[] = [];
+  let inBody = false;
+  // Same HTML-comment strip as the multi-article parser.
+  const stripped = md.replace(/<!--[\s\S]*?-->/g, '');
+
+  for (const rawLine of stripped.split(/\r?\n/)) {
+    if (!inBody) {
+      const trimmed = rawLine.trim();
+      if (trimmed === '') {
+        if (Object.keys(meta).length > 0) inBody = true;
+        continue;
+      }
+      const kv = /^([A-Za-z]+)\s*:\s*(.+)$/.exec(trimmed);
+      if (kv) {
+        meta[kv[1].toLowerCase()] = kv[2].trim();
+        continue;
+      }
+      inBody = true;
+      bodyLines.push(rawLine);
+      continue;
+    }
+    bodyLines.push(rawLine);
+  }
+
+  if (!meta.title || !meta.date) {
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.warn(`[articles] Skipping ${source}: missing Title or Date`);
+    }
+    return null;
+  }
+
+  const { excerpt, body } = splitExcerptBody(bodyLines);
+  return {
+    title: meta.title,
+    date: meta.date,
+    reading: meta.reading,
+    link: meta.link,
+    excerpt,
+    body,
+  };
+}
+
+const shortForm = parseArticlesMarkdown(articlesMarkdown);
+
+const longForm = Object.entries(longFormFiles)
+  // Skip files whose basename starts with `_` (drafts, templates, notes).
+  .filter(([path]) => !/\/_[^/]+\.md$/.test(path))
+  .map(([path, md]) => parseArticleFile(md, path))
+  .filter((a): a is Article => a !== null);
+
+// Most recent first (string comparison works for ISO dates).
+export const articles: Article[] = [...shortForm, ...longForm].sort((a, b) =>
+  b.date.localeCompare(a.date),
+);
