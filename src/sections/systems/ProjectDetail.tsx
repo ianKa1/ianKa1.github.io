@@ -77,32 +77,14 @@ export function ProjectDetail({ project, onBack }: ProjectDetailProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.5 }}
       >
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Overview</h2>
-          <p className={styles.text}>
-            This is placeholder content for the project overview. Describe the project's
-            purpose, goals, and what problem it solves. Include context about why this
-            project exists and what makes it interesting.
-          </p>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Approach</h2>
-          <p className={styles.text}>
-            Placeholder content for the technical approach. Discuss the technologies
-            used, architectural decisions, and any interesting implementation details.
-            This section helps readers understand how the project was built.
-          </p>
-        </section>
-
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Outcome</h2>
-          <p className={styles.text}>
-            Placeholder content for results and reflections. Share what you learned,
-            what worked well, what you might do differently, and any metrics or
-            outcomes worth mentioning.
-          </p>
-        </section>
+        {project.sections.map((section) => (
+          <section key={section.heading} className={styles.section}>
+            <h2 className={styles.sectionTitle}>{section.heading}</h2>
+            {section.paragraphs.map((para, i) => (
+              <p key={i} className={styles.text}>{para}</p>
+            ))}
+          </section>
+        ))}
       </motion.div>
     </motion.article>
   );
