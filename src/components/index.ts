@@ -1,8 +1,2 @@
 export { Navigation } from './Navigation';
-export { Content } from './Content';
 export { AmbientBackground } from './AmbientBackground';
-export { Gallery } from './Gallery';
-export { ProjectCard } from './ProjectCard';
-export { ProjectGrid } from './ProjectGrid';
-export { ProjectDetail } from './ProjectDetail';
-export { Words } from './Words';

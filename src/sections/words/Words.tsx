@@ -1,8 +1,28 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { articles, SECTION_BREAK, type Article } from '../data/articles';
-import { bookGroups } from '../data/books';
+import { articles, SECTION_BREAK, type Article } from '../../data/articles';
+import { bookGroups } from '../../data/books';
+import { SectionShell } from '../../content/SectionShell';
+import sectionStyles from '../../content/SectionShell.module.css';
 import styles from './Words.module.css';
+
+/**
+ * Words section: writes the shared heading and intro, then delegates to
+ * the library body (which owns its own library ↔ reader transition).
+ */
+export function Words() {
+  return (
+    <SectionShell id="words" category="words">
+      <h1 className={sectionStyles.title}>Words</h1>
+      <p className={sectionStyles.text}>
+        Reading and writing as parallel acts of attention. Notes on literature,
+        philosophy, essays that changed how I see things, and my own attempts
+        to articulate ideas.
+      </p>
+      <WordsBody />
+    </SectionShell>
+  );
+}
 
 /** Smooth-scroll handler that respects reduced-motion. */
 function scrollToId(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
@@ -31,7 +51,13 @@ function formatYear(iso: string): string {
   return String(d.getFullYear());
 }
 
-export function Words() {
+/** Normalise a reading-time string like `"8 min"` into `"8 min read"`,
+ *  tolerating authors who already appended `" read"`. */
+function formatReading(reading: string): string {
+  return reading.replace(/min$/, 'min read').replace(/min read read$/, 'min read');
+}
+
+function WordsBody() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const articleCount = articles.length;
   const volumeCount = bookGroups.reduce((sum, g) => sum + g.books.length, 0);
@@ -142,7 +168,7 @@ export function Words() {
                 {article.reading && (
                   <>
                     <span aria-hidden="true">·</span>
-                    <span>{article.reading.replace(/min$/, 'min read').replace(/min read read$/, 'min read')}</span>
+                    <span>{formatReading(article.reading)}</span>
                   </>
                 )}
               </div>
@@ -274,7 +300,7 @@ function ArticleReader({ article, onBack }: { article: Article; onBack: () => vo
           {article.reading && (
             <>
               <span aria-hidden="true">·</span>
-              <span>{article.reading.replace(/min$/, 'min read').replace(/min read read$/, 'min read')}</span>
+              <span>{formatReading(article.reading)}</span>
             </>
           )}
         </div>

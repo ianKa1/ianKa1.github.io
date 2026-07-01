@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { VisualItem } from '../data/visuals';
+import type { VisualItem } from '../../data/visuals';
 import styles from './Gallery.module.css';
 
 interface GalleryProps {

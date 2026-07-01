@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Navigation, Content, AmbientBackground } from './components';
+import { Navigation, AmbientBackground } from './components';
+import { SectionRouter } from './content/SectionRouter';
 import type { Category } from './types';
 import './styles/global.css';
 
@@ -19,7 +20,7 @@ function App() {
           onCategoryClick={setActiveCategory}
           onCategoryHover={setHoveredCategory}
         />
-        <Content activeCategory={activeCategory} />
+        <SectionRouter activeCategory={activeCategory} />
       </div>
     </>
   );

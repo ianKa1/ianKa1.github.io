@@ -1,25 +1,10 @@
-.main {
-  margin-left: var(--nav-width);
-  flex: 1;
-  padding: var(--content-padding);
-  padding-left: calc(var(--content-padding) + 2rem);
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.content {
-  max-width: 640px;
-  width: 100%;
+.section {
+  display: block;
 }
 
 /* Wider content for gallery sections */
 .section[data-section="visuals"] {
   max-width: 900px;
-}
-
-.section {
-  display: block;
 }
 
 .title {
@@ -62,35 +47,7 @@
 .section[data-section="traces"] .title { color: var(--traces-ink-deep); }
 .section[data-section="entry"] .title { color: var(--text-primary); }
 
-/* Map placeholder */
-.mapPlaceholder {
-  margin-top: 2rem;
-  padding: 4rem 2rem;
-  border: 1px dashed var(--traces-ink-deep);
-  border-radius: 8px;
-  text-align: center;
-  color: var(--text-muted);
-  background: rgba(74, 74, 74, 0.05);
-  min-height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 700px) {
-  .main {
-    margin-left: 0;
-    padding: 2rem;
-    align-items: flex-start;
-  }
-}
-
-/* Large screens - expand content proportionally */
 @media (min-width: 1400px) {
-  .content {
-    max-width: 800px;
-  }
-
   .section[data-section="visuals"] {
     max-width: calc(100vw - var(--nav-width) - 12rem);
   }
@@ -104,17 +61,7 @@
   }
 }
 
-/* Extra large / zoomed out screens */
 @media (min-width: 1800px) {
-  .main {
-    padding: 6rem;
-    padding-left: 8rem;
-  }
-
-  .content {
-    max-width: 900px;
-  }
-
   .section[data-section="visuals"] {
     max-width: calc(100vw - var(--nav-width) - 16rem);
   }
@@ -136,17 +83,7 @@
   }
 }
 
-/* Ultra-wide displays */
 @media (min-width: 2400px) {
-  .main {
-    padding: 8rem;
-    padding-left: 10rem;
-  }
-
-  .content {
-    max-width: 1000px;
-  }
-
   .section[data-section="visuals"] {
     max-width: calc(100vw - var(--nav-width) - 20rem);
   }

@@ -1,4 +1,4 @@
-import type { Project } from '../data/projects';
+import type { Project } from '../../data/projects';
 import { ProjectCard } from './ProjectCard';
 import styles from './ProjectGrid.module.css';
 
