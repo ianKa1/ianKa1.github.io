@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { articles, type Article } from '../data/articles';
+import { articles, SECTION_BREAK, type Article } from '../data/articles';
 import { bookGroups } from '../data/books';
 import styles from './Words.module.css';
 
@@ -282,9 +282,21 @@ function ArticleReader({ article, onBack }: { article: Article; onBack: () => vo
       </header>
 
       <div className={styles.readerBody}>
-        {paragraphs.map((para, i) => (
-          <p key={i} data-paragraph={i === 0 ? 'dropcap' : undefined}>{para}</p>
-        ))}
+        {(() => {
+          // Track the index of the first real paragraph so the drop-cap
+          // lands on it (not on a section-break sentinel that may lead).
+          const firstRealIdx = paragraphs.findIndex((p) => p !== SECTION_BREAK);
+          return paragraphs.map((para, i) => {
+            if (para === SECTION_BREAK) {
+              return <div key={i} className={styles.readerBreak} aria-hidden="true" />;
+            }
+            return (
+              <p key={i} data-paragraph={i === firstRealIdx ? 'dropcap' : undefined}>
+                {para}
+              </p>
+            );
+          });
+        })()}
       </div>
 
       <footer className={styles.readerFooter}>

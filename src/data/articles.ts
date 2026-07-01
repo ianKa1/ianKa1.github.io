@@ -27,14 +27,21 @@ export interface Article {
   body: string[];
 }
 
+/** Sentinel emitted by the parser for a lone `<br>` line — the reader
+ *  renders this as a visible section break (extra vertical space). */
+const SECTION_BREAK = '\u0000BR\u0000';
+
 /**
  * Split raw body lines into `excerpt` (card preview) and `body`
  * (reader-only continuation) on a lone `---` line. Blank lines break
  * paragraphs; adjacent non-blank lines are joined with a single space.
+ * A lone `<br>` (case-insensitive, optional `/`) becomes a section-break
+ * sentinel so authors can force extra vertical space between paragraphs.
  *
  * Safety net: if the author never wrote a `---` but the article has more
- * than one paragraph, treat the first paragraph as the intro and shove
- * the rest into `body` so long essays don't dump inline on the Words page.
+ * than one real paragraph, treat the first paragraph as the intro and
+ * shove the rest into `body` so long essays don't dump inline on the
+ * Words page.
  */
 function splitExcerptBody(lines: string[]): { excerpt: string[]; body: string[] } {
   const excerpt: string[] = [];
@@ -56,6 +63,15 @@ function splitExcerptBody(lines: string[]): { excerpt: string[]; body: string[] 
       sawSeparator = true;
       continue;
     }
+    if (/^<br\s*\/?>$/i.test(trimmed)) {
+      flushBuf();
+      // Collapse adjacent section-break markers so `<br><br>` doesn't
+      // stack multiple spacers.
+      if (target[target.length - 1] !== SECTION_BREAK) {
+        target.push(SECTION_BREAK);
+      }
+      continue;
+    }
     if (trimmed === '') {
       flushBuf();
     } else {
@@ -64,12 +80,31 @@ function splitExcerptBody(lines: string[]): { excerpt: string[]; body: string[] 
   }
   flushBuf();
 
-  if (!sawSeparator && excerpt.length > 1) {
-    const [first, ...rest] = excerpt;
+  // Strip breaks that would render as awkward gaps:
+  //   - leading/trailing breaks in the excerpt (top/bottom of the card
+  //     and top of the reader)
+  //   - trailing breaks in the body (bottom of the reader)
+  // Leading breaks in `body` are kept: they sit between the intro and
+  // the rest of the article in the reader view, which is exactly where
+  // an author might want extra vertical space.
+  while (excerpt[0] === SECTION_BREAK) excerpt.shift();
+  while (excerpt[excerpt.length - 1] === SECTION_BREAK) excerpt.pop();
+  while (body[body.length - 1] === SECTION_BREAK) body.pop();
+
+  // Safety net uses only real paragraphs (ignore section breaks in count).
+  const realExcerptCount = excerpt.filter((p) => p !== SECTION_BREAK).length;
+  if (!sawSeparator && realExcerptCount > 1) {
+    // Move everything after the first real paragraph into body, preserving
+    // any section-break markers that follow it.
+    const first = excerpt.find((p) => p !== SECTION_BREAK)!;
+    const firstIdx = excerpt.indexOf(first);
+    const rest = excerpt.slice(firstIdx + 1);
     return { excerpt: [first], body: rest };
   }
   return { excerpt, body };
 }
+
+export { SECTION_BREAK };
 
 /**
  * Parse the multi-article `articles.md` file. Each `## Title` heading opens

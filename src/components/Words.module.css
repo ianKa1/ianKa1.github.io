@@ -843,6 +843,15 @@
   margin-bottom: 0;
 }
 
+/* Explicit section-break spacer emitted by a lone `<br>` in the source
+   markdown. Adds a visible gap between paragraphs — bigger than the
+   usual paragraph margin so it reads as a scene break, not just extra
+   air. Kept aria-hidden in the JSX so screen readers skip it. */
+.readerBreak {
+  height: 1.75rem;
+  margin: 0.25rem 0 1.55rem;
+}
+
 /* Drop-cap on the very first paragraph of the reader body — mirrors
    the treatment on the lead Voice card. */
 .readerBody p[data-paragraph="dropcap"]::first-letter {
