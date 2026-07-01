@@ -27,14 +27,14 @@ export function Navigation({
         >
           
         </motion.div>
-        <motion.div
-          className={styles.tagline}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          Maker of things
-        </motion.div>
+        <motion.img
+          src="/avator.jpg"
+          alt="Portrait"
+          className={styles.avatar}
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        />
       </div>
 
       <div className={styles.categories}>
