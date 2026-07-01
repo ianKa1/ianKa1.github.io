@@ -2,32 +2,9 @@ import { useRef, useEffect, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { motion, AnimatePresence } from 'motion/react';
-import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, FeatureCollection } from 'geojson';
+import type { Place, PlaceGroup } from '../data/places';
 import styles from './InteractiveMap.module.css';
-
-export interface Place {
-  /** Full display name as written in `places.md`, e.g. `"Paris, France"`. */
-  name: string;
-  /** City half of `name` — everything before the last `, `. Falls back to
-   *  `name` when there's no comma (e.g. `"Monaco"`). */
-  city: string;
-  /** Country half of `name` — everything after the last `, `. Falls back
-   *  to `name` for city-state entries without a comma. Used to group the
-   *  place list by country. */
-  country: string;
-  coordinates: [number, number]; // [longitude, latitude]
-  type: 'lived' | 'traveled';
-  visited?: string;
-  note?: string;
-  // Optional admin boundary polygon (city/district) used to shade the area
-  // on the map. Populated by `scripts/geocode.mjs` from Nominatim.
-  boundary?: Polygon | MultiPolygon;
-}
-
-export interface PlaceGroup {
-  country: string;
-  places: Place[];
-}
 
 interface InteractiveMapProps {
   places: Place[];

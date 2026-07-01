@@ -1,9 +1,32 @@
-import type { Place } from '../components/InteractiveMap';
 import type { MultiPolygon, Polygon } from 'geojson';
 // Vite's `?raw` suffix imports the markdown contents as a string at build time.
 import placesMarkdown from './places.md?raw';
 // Coord + boundary cache populated by `scripts/geocode.mjs` from Nominatim.
 import placeCache from './places.cache.json';
+
+export interface Place {
+  /** Full display name as written in `places.md`, e.g. `"Paris, France"`. */
+  name: string;
+  /** City half of `name` — everything before the last `, `. Falls back to
+   *  `name` when there's no comma (e.g. `"Monaco"`). */
+  city: string;
+  /** Country half of `name` — everything after the last `, `. Falls back
+   *  to `name` for city-state entries without a comma. Used to group the
+   *  place list by country. */
+  country: string;
+  coordinates: [number, number]; // [longitude, latitude]
+  type: 'lived' | 'traveled';
+  visited?: string;
+  note?: string;
+  // Optional admin boundary polygon (city/district) used to shade the area
+  // on the map. Populated by `scripts/geocode.mjs` from Nominatim.
+  boundary?: Polygon | MultiPolygon;
+}
+
+export interface PlaceGroup {
+  country: string;
+  places: Place[];
+}
 
 type PlaceType = Place['type'];
 
@@ -130,11 +153,6 @@ export const places: Place[] = parsed;
  * The place list in the Traces UI is rendered from this instead of the flat
  * `places` array so the same city always sits under its country header.
  */
-export interface PlaceGroup {
-  country: string;
-  places: Place[];
-}
-
 const groupMap = new Map<string, Place[]>();
 for (const p of parsed) {
   const bucket = groupMap.get(p.country);
