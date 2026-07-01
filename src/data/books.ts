@@ -35,10 +35,12 @@ function splitBilingual(cell: string): { primary: string; en?: string } {
 }
 
 export interface BookGroup {
-  /** `"Currently Reading"` or a year string like `"2026"`. */
+  /** `"Currently Reading"`, a year string like `"2026"`, or `"Before 2026"`. */
   label: string;
   /** Numeric year for sorting, or `null` for the pinned "Currently Reading" group. */
   year: number | null;
+  /** Optional sort override so `Before <year>` groups fall just after `<year>`. */
+  sortKey?: number;
   books: Book[];
 }
 
@@ -46,6 +48,7 @@ export interface BookGroup {
  * Parse `books.md` into year-grouped collections. Recognised headings:
  *   `## Currently Reading`  →  pinned group, year = null
  *   `## 2026`               →  year group
+ *   `## Before 2026`        →  catch-all bucket, sorts after the matching year
  * Tables under any other `## ` heading (e.g. `## Format`) are ignored.
  */
 function parseBooksMarkdown(md: string): BookGroup[] {
@@ -58,11 +61,16 @@ function parseBooksMarkdown(md: string): BookGroup[] {
 
     if (line.startsWith('## ')) {
       const heading = line.slice(3).trim();
+      const beforeMatch = heading.match(/^before\s+(\d{4})$/i);
       if (/^currently reading$/i.test(heading)) {
         current = { label: 'Currently Reading', year: null, books: [] };
         groups.push(current);
       } else if (/^\d{4}$/.test(heading)) {
         current = { label: heading, year: Number(heading), books: [] };
+        groups.push(current);
+      } else if (beforeMatch) {
+        const y = Number(beforeMatch[1]);
+        current = { label: `Before ${y}`, year: y, sortKey: y - 0.5, books: [] };
         groups.push(current);
       } else {
         current = null;
@@ -96,11 +104,14 @@ function parseBooksMarkdown(md: string): BookGroup[] {
     });
   }
 
-  // Pinned group first, then year-descending, then by year ascending (just in case).
+  // Pinned group first, then year-descending. `Before <year>` groups use
+  // `sortKey = year - 0.5` so they slot in just after the matching year.
   groups.sort((a, b) => {
     if (a.year === null) return -1;
     if (b.year === null) return 1;
-    return b.year - a.year;
+    const ak = a.sortKey ?? a.year;
+    const bk = b.sortKey ?? b.year;
+    return bk - ak;
   });
 
   return groups.filter((g) => g.books.length > 0);
