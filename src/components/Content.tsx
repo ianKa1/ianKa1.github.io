@@ -17,6 +17,7 @@ const galleryImages: GalleryImage[] = [
   { src: '/images/visuals/ChatGPT Image May 1, 2026, 06_58_44 PM.png', alt: 'Generated image' },
   { src: '/images/visuals/4bc612400cedbe514f4865da63ceefbd.jpg', alt: 'Visual' },
   { src: '/images/visuals/fe8352fd72d720f3dd213a9744df73ed.jpg', alt: 'Visual' },
+  { src: '/images/visuals/2523d3b275a416f8e5a067f1645e3fe0.mp4', alt: 'Motion study' },
 ];
 
 // Projects for Systems section

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import styles from './Gallery.module.css';
 
@@ -6,10 +6,83 @@ export interface GalleryImage {
   src: string;
   alt: string;
   caption?: string;
+  type?: 'image' | 'video';
 }
 
 interface GalleryProps {
   images: GalleryImage[];
+}
+
+function isVideoSrc(src: string): boolean {
+  return /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(src);
+}
+
+function resolveType(item: GalleryImage): 'image' | 'video' {
+  return item.type ?? (isVideoSrc(item.src) ? 'video' : 'image');
+}
+
+interface GridItemProps {
+  item: GalleryImage;
+  index: number;
+  onSelect: () => void;
+}
+
+function GridItem({ item, index, onSelect }: GridItemProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const kind = resolveType(item);
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <motion.button
+      className={styles.item}
+      onClick={onSelect}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {kind === 'video' ? (
+        <>
+          <video
+            ref={videoRef}
+            src={item.src}
+            className={styles.image}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label={item.alt}
+          />
+          <span className={styles.videoBadge} aria-hidden="true">▶</span>
+        </>
+      ) : (
+        <img
+          src={item.src}
+          alt={item.alt}
+          className={styles.image}
+          loading="lazy"
+        />
+      )}
+      {item.caption && (
+        <span className={styles.caption}>{item.caption}</span>
+      )}
+    </motion.button>
+  );
 }
 
 export function Gallery({ images }: GalleryProps) {
@@ -23,30 +96,18 @@ export function Gallery({ images }: GalleryProps) {
     );
   }
 
+  const selectedKind = selectedImage ? resolveType(selectedImage) : null;
+
   return (
     <>
       <div className={styles.grid}>
         {images.map((image, index) => (
-          <motion.button
+          <GridItem
             key={image.src}
-            className={styles.item}
-            onClick={() => setSelectedImage(image)}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.08 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <img
-              src={image.src}
-              alt={image.alt}
-              className={styles.image}
-              loading="lazy"
-            />
-            {image.caption && (
-              <span className={styles.caption}>{image.caption}</span>
-            )}
-          </motion.button>
+            item={image}
+            index={index}
+            onSelect={() => setSelectedImage(image)}
+          />
         ))}
       </div>
 
@@ -67,11 +128,23 @@ export function Gallery({ images }: GalleryProps) {
               transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                src={selectedImage.src}
-                alt={selectedImage.alt}
-                className={styles.lightboxImage}
-              />
+              {selectedKind === 'video' ? (
+                <video
+                  src={selectedImage.src}
+                  className={styles.lightboxImage}
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                  aria-label={selectedImage.alt}
+                />
+              ) : (
+                <img
+                  src={selectedImage.src}
+                  alt={selectedImage.alt}
+                  className={styles.lightboxImage}
+                />
+              )}
               {selectedImage.caption && (
                 <p className={styles.lightboxCaption}>{selectedImage.caption}</p>
               )}

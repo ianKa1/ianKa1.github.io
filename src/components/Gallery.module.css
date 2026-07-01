@@ -39,6 +39,31 @@
   transform: scale(1.05);
 }
 
+.videoBadge {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding-left: 2px;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.item:hover .videoBadge {
+  opacity: 0;
+}
+
 .caption {
   position: absolute;
   bottom: 0;
