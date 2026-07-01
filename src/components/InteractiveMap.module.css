@@ -316,6 +316,47 @@
   background: rgba(0, 0, 0, 0.04);
 }
 
+/* Wrapper for the country-grouped sections. Groups stack vertically with
+   a generous rhythm so each country reads as its own paragraph. */
+.placeGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.placeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* Country header: small-caps display type + a hairline count, sitting
+   above the row of city chips. Mirrors the atlas-index tone used in
+   Words → Index. */
+.placeGroupTitle {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.12);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.placeGroupCount {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
 .places {
   list-style: none;
   padding: 0;

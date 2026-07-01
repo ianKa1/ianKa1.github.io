@@ -6,7 +6,15 @@ import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson'
 import styles from './InteractiveMap.module.css';
 
 export interface Place {
+  /** Full display name as written in `places.md`, e.g. `"Paris, France"`. */
   name: string;
+  /** City half of `name` — everything before the last `, `. Falls back to
+   *  `name` when there's no comma (e.g. `"Monaco"`). */
+  city: string;
+  /** Country half of `name` — everything after the last `, `. Falls back
+   *  to `name` for city-state entries without a comma. Used to group the
+   *  place list by country. */
+  country: string;
   coordinates: [number, number]; // [longitude, latitude]
   type: 'lived' | 'traveled';
   visited?: string;
@@ -16,8 +24,16 @@ export interface Place {
   boundary?: Polygon | MultiPolygon;
 }
 
+export interface PlaceGroup {
+  country: string;
+  places: Place[];
+}
+
 interface InteractiveMapProps {
   places: Place[];
+  /** Same places grouped by country, in first-appearance order. Used to
+   *  render the list below the map. */
+  groups: PlaceGroup[];
 }
 
 // Editorial Atelier map style - warm, muted, elegant.
@@ -62,7 +78,7 @@ const BOUNDARY_COLORS = {
   traveled: 'rgba(120, 112, 100, 0.18)', // Warm grey with transparency
 };
 
-export function InteractiveMap({ places }: InteractiveMapProps) {
+export function InteractiveMap({ places, groups }: InteractiveMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
@@ -285,25 +301,48 @@ export function InteractiveMap({ places }: InteractiveMapProps) {
             Reset view
           </button>
         </div>
-        <ul className={styles.places}>
-          {places.map((place, index) => (
-            <motion.li
-              key={place.name}
-              className={`${styles.placeItem} ${activePlace?.name === place.name ? styles.placeItemActive : ''}`}
-              data-type={place.type}
-              onClick={() => handlePlaceClick(place)}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-            >
-              <span className={`${styles.placeIndicator} ${place.type === 'lived' ? styles.placeIndicatorLived : styles.placeIndicatorTraveled}`} />
-              <span className={styles.placeName}>{place.name}</span>
-              {place.visited && (
-                <span className={styles.placeYear}>{place.visited}</span>
-              )}
-            </motion.li>
-          ))}
-        </ul>
+        {/* Grouped by country. Continues a single stagger index across
+            groups so the entrance animation reads as one sweep, not a
+            restart per section. */}
+        {(() => {
+          let idx = 0;
+          return (
+            <div className={styles.placeGroups}>
+              {groups.map((group) => (
+                <section key={group.country} className={styles.placeGroup}>
+                  <h4 className={styles.placeGroupTitle}>
+                    <span>{group.country}</span>
+                    <span className={styles.placeGroupCount}>
+                      {group.places.length}
+                    </span>
+                  </h4>
+                  <ul className={styles.places}>
+                    {group.places.map((place) => {
+                      const i = idx++;
+                      return (
+                        <motion.li
+                          key={place.name}
+                          className={`${styles.placeItem} ${activePlace?.name === place.name ? styles.placeItemActive : ''}`}
+                          data-type={place.type}
+                          onClick={() => handlePlaceClick(place)}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: i * 0.05 }}
+                        >
+                          <span className={`${styles.placeIndicator} ${place.type === 'lived' ? styles.placeIndicatorLived : styles.placeIndicatorTraveled}`} />
+                          <span className={styles.placeName}>{place.city}</span>
+                          {place.visited && (
+                            <span className={styles.placeYear}>{place.visited}</span>
+                          )}
+                        </motion.li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

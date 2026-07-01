@@ -6,7 +6,7 @@ import { ProjectGrid } from './ProjectGrid';
 import { ProjectDetail } from './ProjectDetail';
 import { InteractiveMap } from './InteractiveMap';
 import { Words } from './Words';
-import { places } from '../data/places';
+import { places, placeGroups } from '../data/places';
 import styles from './Content.module.css';
 
 // Gallery images
@@ -197,7 +197,7 @@ export function Content({ activeCategory }: ContentProps) {
                 Places I've inhabited, however briefly. Each mark on the map
                 is a chapter read in the language of a city.
               </p>
-              <InteractiveMap places={places} />
+              <InteractiveMap places={places} groups={placeGroups} />
             </motion.section>
           )}
         </AnimatePresence>

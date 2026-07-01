@@ -67,8 +67,17 @@ function parsePlacesMarkdown(md: string): Place[] {
       continue;
     }
 
+    // Split on the *last* comma so `Washington, D.C., USA` still works.
+    // City-state entries without a comma (e.g. `Monaco`) fall through as
+    // both city and country.
+    const commaIdx = name.lastIndexOf(', ');
+    const city = commaIdx >= 0 ? name.slice(0, commaIdx).trim() : name;
+    const country = commaIdx >= 0 ? name.slice(commaIdx + 2).trim() : name;
+
     const place: Place = {
       name,
+      city,
+      country,
       coordinates: entry.coords,
       type: currentType,
     };
@@ -111,3 +120,28 @@ parsed.sort((a, b) => {
 });
 
 export const places: Place[] = parsed;
+
+/**
+ * Countries with their places, in first-appearance order (so countries
+ * containing any lived place naturally lead — the Lived section is parsed
+ * first). Within each country, `lived` places come before `traveled`, and
+ * then by most recent year.
+ *
+ * The place list in the Traces UI is rendered from this instead of the flat
+ * `places` array so the same city always sits under its country header.
+ */
+export interface PlaceGroup {
+  country: string;
+  places: Place[];
+}
+
+const groupMap = new Map<string, Place[]>();
+for (const p of parsed) {
+  const bucket = groupMap.get(p.country);
+  if (bucket) bucket.push(p);
+  else groupMap.set(p.country, [p]);
+}
+export const placeGroups: PlaceGroup[] = Array.from(groupMap, ([country, places]) => ({
+  country,
+  places,
+}));

@@ -29,43 +29,43 @@ remove the header or separator rows.
 
 ## Traveled
 
-| City              | Years | Note |
-|-------------------|-------|------|
-| Chengdu, China    | 2025  |      |
-| Xiamen, China     | 2018  |      |
-| Nanjing, China    | 2018  |      |
-| Guangzhou, China  | 2018  |      |
-| Chongqing, China  | 2025  |      |
-| Sanya, China      | 2024  |      |
-| Haikou, China     | 2024  |      |
-| Changsha, China   | 2025  |      |
-| Jinan, China      | 2025  |      |
-| Shenzhen, China   | 2025  |      |
-| Hong Kong, China  | 2023  |      |
-| Beijing, China    | 2025  |      |
-| Qingdao, China    | 2025  |      |
-|Kunming, China|2025||
-|Osaka|2025||
-|Nara, Japan|2025||
-|Kobe|2025||
-|Tokyo|2025||
-|Kyoto|2025||
-|Sapporo|2025||
-|Otaru|2025||
-|Hakodate|2025||
-|Paris|2025||
-|Lyon|2025||
-|Nice|2025||
-|Monaco|2025||
-|Cannes|2025||
-|Philadelphia|2025||
-|Miami|2026||
-|Geneva|2025||
-|Interlaken|2025||
-|Zurich|2025||
-|Milan|2025||
-|Venice|2025||
-|Florence|2025||
-|Rome|2025||
-|Athens|2025||
-|Cairo|2025||
+| City                    | Years | Note |
+|-------------------------|-------|------|
+| Chengdu, China          | 2025  |      |
+| Xiamen, China           | 2018  |      |
+| Nanjing, China          | 2018  |      |
+| Guangzhou, China        | 2018  |      |
+| Chongqing, China        | 2025  |      |
+| Sanya, China            | 2024  |      |
+| Haikou, China           | 2024  |      |
+| Changsha, China         | 2025  |      |
+| Jinan, China            | 2025  |      |
+| Shenzhen, China         | 2025  |      |
+| Hong Kong, China        | 2023  |      |
+| Beijing, China          | 2025  |      |
+| Qingdao, China          | 2025  |      |
+| Kunming, China          | 2025  |      |
+| Osaka, Japan            | 2025  |      |
+| Nara, Japan             | 2025  |      |
+| Kobe, Japan             | 2025  |      |
+| Tokyo, Japan            | 2025  |      |
+| Kyoto, Japan            | 2025  |      |
+| Sapporo, Japan          | 2025  |      |
+| Otaru, Japan            | 2025  |      |
+| Hakodate, Japan         | 2025  |      |
+| Paris, France           | 2025  |      |
+| Lyon, France            | 2025  |      |
+| Nice, France            | 2025  |      |
+| Cannes, France          | 2025  |      |
+| Monaco                  | 2025  |      |
+| Philadelphia, USA       | 2025  |      |
+| Miami, USA              | 2026  |      |
+| Geneva, Switzerland     | 2025  |      |
+| Interlaken, Switzerland | 2025  |      |
+| Zurich, Switzerland     | 2025  |      |
+| Milan, Italy            | 2025  |      |
+| Venice, Italy           | 2025  |      |
+| Florence, Italy         | 2025  |      |
+| Rome, Italy             | 2025  |      |
+| Athens, Greece          | 2025  |      |
+| Cairo, Egypt            | 2025  |      |
