@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import type { Project } from '../types';
+import type { Project } from '../data/projects';
 import styles from './ProjectDetail.module.css';
 
 interface ProjectDetailProps {

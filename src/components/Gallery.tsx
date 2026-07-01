@@ -1,28 +1,22 @@
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import type { VisualItem } from '../data/visuals';
 import styles from './Gallery.module.css';
 
-export interface GalleryImage {
-  src: string;
-  alt: string;
-  caption?: string;
-  type?: 'image' | 'video';
-}
-
 interface GalleryProps {
-  images: GalleryImage[];
+  images: VisualItem[];
 }
 
 function isVideoSrc(src: string): boolean {
   return /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(src);
 }
 
-function resolveType(item: GalleryImage): 'image' | 'video' {
+function resolveType(item: VisualItem): 'image' | 'video' {
   return item.type ?? (isVideoSrc(item.src) ? 'video' : 'image');
 }
 
 interface GridItemProps {
-  item: GalleryImage;
+  item: VisualItem;
   index: number;
   onSelect: () => void;
 }
@@ -86,7 +80,7 @@ function GridItem({ item, index, onSelect }: GridItemProps) {
 }
 
 export function Gallery({ images }: GalleryProps) {
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [selectedImage, setSelectedImage] = useState<VisualItem | null>(null);
 
   if (images.length === 0) {
     return (

@@ -45,14 +45,3 @@ export const CATEGORIES: CategoryConfig[] = [
     colorDeep: 'var(--traces-ink-deep)',
   },
 ];
-
-// Project types for Systems section
-export interface Project {
-  id: string;
-  title: string;
-  subtitle?: string;
-  thumbnail: string;
-  thumbnailType: 'image' | 'video';
-  year?: string;
-  tags?: string[];
-}
