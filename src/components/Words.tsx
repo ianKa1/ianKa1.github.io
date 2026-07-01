@@ -1,5 +1,6 @@
-import { motion } from 'motion/react';
-import { articles } from '../data/articles';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { articles, type Article } from '../data/articles';
 import { bookGroups } from '../data/books';
 import styles from './Words.module.css';
 
@@ -31,12 +32,29 @@ function formatYear(iso: string): string {
 }
 
 export function Words() {
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const articleCount = articles.length;
   const volumeCount = bookGroups.reduce((sum, g) => sum + g.books.length, 0);
   const yearCount = bookGroups.filter((g) => g.year !== null).length;
 
   return (
     <div className={styles.root}>
+      <AnimatePresence mode="wait">
+        {selectedArticle ? (
+          <ArticleReader
+            key={`reader-${selectedArticle.title}`}
+            article={selectedArticle}
+            onBack={() => setSelectedArticle(null)}
+          />
+        ) : (
+          <motion.div
+            key="library"
+            className={styles.libraryView}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
       {/* ====================== CONTENTS — masthead ====================== */}
       <motion.nav
         className={styles.contents}
@@ -130,11 +148,13 @@ export function Words() {
               </div>
 
               <h3 className={styles.articleTitle}>
-                {article.link ? (
-                  <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                ) : (
-                  <span>{article.title}</span>
-                )}
+                <button
+                  type="button"
+                  className={styles.articleTitleButton}
+                  onClick={() => setSelectedArticle(article)}
+                >
+                  {article.title}
+                </button>
               </h3>
 
               <div className={styles.articleExcerpt}>
@@ -145,11 +165,13 @@ export function Words() {
 
               <div className={styles.articleFooter}>
                 <span className={styles.articleDate}>{formatLongDate(article.date)}</span>
-                {article.link && (
-                  <a className={styles.readOn} href={article.link} target="_blank" rel="noopener noreferrer">
-                    read on <span aria-hidden="true">→</span>
-                  </a>
-                )}
+                <button
+                  type="button"
+                  className={styles.readOn}
+                  onClick={() => setSelectedArticle(article)}
+                >
+                  keep reading <span aria-hidden="true">→</span>
+                </button>
               </div>
             </motion.li>
           ))}
@@ -211,6 +233,76 @@ export function Words() {
           ))}
         </div>
       </section>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+/* ==========================================================
+   Article reader — full-length view for a single essay.
+   Shares typographic language with the Voice cards: coral
+   rules, italic display title, drop-cap on the first para.
+   ========================================================== */
+function ArticleReader({ article, onBack }: { article: Article; onBack: () => void }) {
+  // When the reader opens, jump the page back to the top so the
+  // reader header — not wherever the user clicked — is in view.
+  useEffect(() => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' });
+  }, []);
+
+  const paragraphs = [...article.excerpt, ...article.body];
+
+  return (
+    <motion.article
+      className={styles.reader}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+    >
+      <button type="button" className={styles.readerBack} onClick={onBack}>
+        <span className={styles.readerBackArrow} aria-hidden="true">&larr;</span>
+        <span>back to Voice</span>
+      </button>
+
+      <header className={styles.readerHeader}>
+        <div className={styles.readerMeta}>
+          <time dateTime={article.date}>{formatLongDate(article.date)}</time>
+          {article.reading && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{article.reading.replace(/min$/, 'min read').replace(/min read read$/, 'min read')}</span>
+            </>
+          )}
+        </div>
+        <h1 className={styles.readerTitle}>{article.title}</h1>
+      </header>
+
+      <div className={styles.readerBody}>
+        {paragraphs.map((para, i) => (
+          <p key={i} data-paragraph={i === 0 ? 'dropcap' : undefined}>{para}</p>
+        ))}
+      </div>
+
+      <footer className={styles.readerFooter}>
+        {article.link && (
+          <a
+            className={styles.readOn}
+            href={article.link}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            read on original <span aria-hidden="true">→</span>
+          </a>
+        )}
+        <button type="button" className={styles.readerBack} onClick={onBack}>
+          <span className={styles.readerBackArrow} aria-hidden="true">&larr;</span>
+          <span>back to Voice</span>
+        </button>
+      </footer>
+    </motion.article>
   );
 }

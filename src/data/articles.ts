@@ -7,17 +7,21 @@ export interface Article {
   date: string;
   /** Free text, e.g. "8 min". May be undefined. */
   reading?: string;
-  /** Optional URL for the "read on →" link. */
+  /** Optional URL for a secondary "read on original →" link. */
   link?: string;
-  /** Body excerpt as paragraphs (no inline markdown processing). */
+  /** Preview paragraphs shown in the Voice card (no inline markdown). */
   excerpt: string[];
+  /** Additional paragraphs shown only in the reader view. Empty if the
+   *  markdown has no `---` separator. */
+  body: string[];
 }
 
 /**
  * Parse `articles.md`. Each `## Title` heading opens an article. Lines that
  * look like `Key: Value` after the heading are pulled into metadata; everything
- * after the first blank line is collected as the excerpt body, broken into
- * paragraphs on blank lines.
+ * after the first blank line is collected as the article body, broken into
+ * paragraphs on blank lines. A single line of `---` splits the body into
+ * `excerpt` (card preview) and `body` (reader-only continuation).
  *
  * The first `## ` block under a non-content heading (e.g. `## Format`) is
  * filtered out by requiring a `Date:` field — articles without a date are
@@ -41,27 +45,41 @@ function parseArticlesMarkdown(md: string): Article[] {
       current = null;
       return;
     }
-    // Collapse runs of blank body lines into paragraph breaks.
-    const paragraphs: string[] = [];
+    // Collapse runs of blank body lines into paragraph breaks. A lone `---`
+    // marks the excerpt/body cut; paragraphs before it are the card preview,
+    // paragraphs after are shown only in the reader.
+    const excerpt: string[] = [];
+    const body: string[] = [];
+    let target = excerpt;
     let buf: string[] = [];
+    const flushBuf = () => {
+      if (buf.length) {
+        target.push(buf.join(' '));
+        buf = [];
+      }
+    };
     for (const line of current.body) {
-      if (line.trim() === '') {
-        if (buf.length) {
-          paragraphs.push(buf.join(' '));
-          buf = [];
-        }
+      const trimmed = line.trim();
+      if (trimmed === '---') {
+        flushBuf();
+        target = body;
+        continue;
+      }
+      if (trimmed === '') {
+        flushBuf();
       } else {
-        buf.push(line.trim());
+        buf.push(trimmed);
       }
     }
-    if (buf.length) paragraphs.push(buf.join(' '));
+    flushBuf();
 
     articles.push({
       title: current.title,
       date,
       reading: current.meta.reading,
       link: current.meta.link,
-      excerpt: paragraphs,
+      excerpt,
+      body,
     });
     current = null;
   };

@@ -8,8 +8,10 @@ article; the lines underneath are read as metadata + excerpt.
 Under each title:
 - `Date: YYYY-MM-DD` — required, used for sort order
 - `Reading: N min` — optional reading-time estimate
-- A blank line, then 1–4 paragraphs of excerpt (rendered as the preview)
-- (Optional) `Link: https://…` — external destination for "read on"
+- (Optional) `Link: https://…` — secondary "read on original →" link
+- A blank line, then 1–4 paragraphs shown as the card **excerpt**
+- (Optional) a lone `---` on its own line, then the rest of the article —
+  everything after `---` is shown only in the reader (click a title to open)
 
 Articles below are placeholders — replace with your own.
 

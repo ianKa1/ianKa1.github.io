@@ -11,14 +11,19 @@
 
 .root {
   margin-top: 2.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 5rem;
   /* Scope CJK fallbacks to Words. The Latin fonts win for Latin glyphs
      thanks to browsers' per-character font shaping. */
   font-family:
     var(--font-body),
     'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+/* Library view (Contents + Voice + Index) stacks vertically. Reader view
+   is a single article and doesn't need the gap. */
+.libraryView {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
 }
 
 /* Pull Voice closer to the Contents masthead — they read as a single
@@ -413,12 +418,42 @@
   font-style: italic;
   color: var(--words-red-deep);
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   transition: color var(--transition-fast), letter-spacing var(--transition-medium);
 }
 
-.readOn:hover {
+.readOn:hover,
+.readOn:focus-visible {
   color: var(--text-primary);
   letter-spacing: 0.04em;
+  outline: none;
+}
+
+/* Clickable title in the Voice card. Reset button chrome, keep the
+   editorial underline-on-hover from the old `<a>` variant. */
+.articleTitleButton {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  transition: background-size var(--transition-medium);
+}
+
+.articleTitleButton:hover,
+.articleTitleButton:focus-visible {
+  background-size: 100% 1px;
+  outline: none;
 }
 
 /* ============================================================
@@ -708,5 +743,157 @@
 
   .bookTitle {
     font-size: 1.15rem;
+  }
+}
+
+/* ============================================================
+   READER — full-length article view
+   Same visual language as Voice cards: coral rules, italic
+   display title, drop-cap on the first paragraph.
+   ============================================================ */
+
+.reader {
+  display: block;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 0.25rem 0 3rem;
+}
+
+.readerBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: none;
+  border: none;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.readerBack:hover,
+.readerBack:focus-visible {
+  color: var(--words-red-deep);
+  outline: none;
+}
+
+.readerBackArrow {
+  display: inline-block;
+  transition: transform var(--transition-medium);
+}
+
+.readerBack:hover .readerBackArrow,
+.readerBack:focus-visible .readerBackArrow {
+  transform: translateX(-3px);
+}
+
+.readerHeader {
+  margin-top: 2.5rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(196, 92, 92, 0.28);
+  margin-bottom: 2.75rem;
+}
+
+.readerMeta {
+  font-family: var(--font-body);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  margin-bottom: 1rem;
+}
+
+.readerTitle {
+  font-family:
+    var(--font-display),
+    'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.readerBody {
+  font-family:
+    var(--font-display),
+    'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+  max-width: 62ch;
+}
+
+.readerBody p {
+  margin: 0 0 1.3rem 0;
+}
+
+.readerBody p:last-child {
+  margin-bottom: 0;
+}
+
+/* Drop-cap on the very first paragraph of the reader body — mirrors
+   the treatment on the lead Voice card. */
+.readerBody p[data-paragraph="dropcap"]::first-letter {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 3.6em;
+  float: left;
+  line-height: 0.88;
+  padding: 0.1em 0.12em 0 0;
+  color: var(--words-red-deep);
+}
+
+.readerFooter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px dotted rgba(0, 0, 0, 0.12);
+}
+
+/* When there's no external link, push the back button to the right so
+   the footer keeps its balance. */
+.readerFooter > .readerBack:only-child {
+  margin-left: auto;
+}
+
+@media (max-width: 700px) {
+  .reader {
+    padding: 0.25rem 0 2rem;
+  }
+
+  .readerHeader {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .readerBody {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+
+  .readerBody p[data-paragraph="dropcap"]::first-letter {
+    font-size: 3em;
+  }
+}
+
+@media (min-width: 1400px) {
+  .readerBody {
+    font-size: 1.1875rem;
   }
 }
