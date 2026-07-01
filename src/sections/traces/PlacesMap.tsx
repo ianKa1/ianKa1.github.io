@@ -3,14 +3,20 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { motion, AnimatePresence } from 'motion/react';
 import type { Feature, FeatureCollection } from 'geojson';
-import type { Place, PlaceGroup } from '../data/places';
-import styles from './InteractiveMap.module.css';
+import type { Place } from '../../data/places';
+import styles from './Traces.module.css';
 
-interface InteractiveMapProps {
+interface PlacesMapProps {
   places: Place[];
-  /** Same places grouped by country, in first-appearance order. Used to
-   *  render the list below the map. */
-  groups: PlaceGroup[];
+  activePlace: Place | null;
+  onActivePlaceChange: (place: Place | null) => void;
+  /** Exposes a fly-to handler so the sidebar list can drive the map. */
+  onMapReady?: (api: PlacesMapApi) => void;
+}
+
+export interface PlacesMapApi {
+  flyTo(place: Place): void;
+  resetView(): void;
 }
 
 // Editorial Atelier map style - warm, muted, elegant.
@@ -55,13 +61,14 @@ const BOUNDARY_COLORS = {
   traveled: 'rgba(120, 112, 100, 0.18)', // Warm grey with transparency
 };
 
-export function InteractiveMap({ places, groups }: InteractiveMapProps) {
+export function PlacesMap({ places, activePlace, onActivePlaceChange, onMapReady }: PlacesMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
-  const [activePlace, setActivePlace] = useState<Place | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // Initialise the maplibre instance once. All later effects assume `map.current`
+  // is stable.
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
@@ -97,6 +104,30 @@ export function InteractiveMap({ places, groups }: InteractiveMapProps) {
       map.current = null;
     };
   }, []);
+
+  // Expose a small imperative API so the sibling <PlacesList /> can drive
+  // the map without touching maplibre directly.
+  useEffect(() => {
+    if (!onMapReady) return;
+    onMapReady({
+      flyTo(place) {
+        map.current?.flyTo({
+          center: place.coordinates,
+          zoom: 6,
+          duration: 1500,
+          essential: true,
+        });
+      },
+      resetView() {
+        map.current?.flyTo({
+          center: [20, 30],
+          zoom: 1.5,
+          duration: 1200,
+          essential: true,
+        });
+      },
+    });
+  }, [onMapReady]);
 
   // Render per-city boundary polygons. Each place carries its own (already
   // simplified) GeoJSON polygon in `place.boundary`, baked into the cache by
@@ -161,7 +192,7 @@ export function InteractiveMap({ places, groups }: InteractiveMapProps) {
     });
   }, [places, isLoaded]);
 
-  // Add markers when map is loaded
+  // Add markers when map is loaded.
   useEffect(() => {
     if (!map.current || !isLoaded) return;
 
@@ -169,25 +200,22 @@ export function InteractiveMap({ places, groups }: InteractiveMapProps) {
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
 
-    // Add new markers with staggered animation
     places.forEach((place, index) => {
       const el = document.createElement('div');
       el.className = styles.marker;
       el.setAttribute('data-type', place.type);
       el.style.animationDelay = `${index * 0.15}s`;
 
-      // Inner glow element
       const glow = document.createElement('div');
       glow.className = place.type === 'lived' ? styles.markerGlowLived : styles.markerGlowTraveled;
       el.appendChild(glow);
 
-      // Core dot
       const dot = document.createElement('div');
       dot.className = place.type === 'lived' ? styles.markerDotLived : styles.markerDotTraveled;
       el.appendChild(dot);
 
-      el.addEventListener('mouseenter', () => setActivePlace(place));
-      el.addEventListener('mouseleave', () => setActivePlace(null));
+      el.addEventListener('mouseenter', () => onActivePlaceChange(place));
+      el.addEventListener('mouseleave', () => onActivePlaceChange(null));
       el.addEventListener('click', () => {
         map.current?.flyTo({
           center: place.coordinates,
@@ -203,124 +231,49 @@ export function InteractiveMap({ places, groups }: InteractiveMapProps) {
 
       markersRef.current.push(marker);
     });
-  }, [places, isLoaded]);
-
-  // Fly to active place
-  const handlePlaceClick = (place: Place) => {
-    setActivePlace(place);
-    map.current?.flyTo({
-      center: place.coordinates,
-      zoom: 6,
-      duration: 1500,
-      essential: true,
-    });
-  };
-
-  const handleResetView = () => {
-    setActivePlace(null);
-    map.current?.flyTo({
-      center: [20, 30],
-      zoom: 1.5,
-      duration: 1200,
-      essential: true,
-    });
-  };
+  }, [places, isLoaded, onActivePlaceChange]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.mapWrapper}>
-        <div ref={mapContainer} className={styles.map} />
+    <div className={styles.mapWrapper}>
+      <div ref={mapContainer} className={styles.map} />
 
-        {/* Loading overlay */}
-        <AnimatePresence>
-          {!isLoaded && (
-            <motion.div
-              className={styles.loadingOverlay}
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <span className={styles.loadingText}>Loading map...</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Loading overlay */}
+      <AnimatePresence>
+        {!isLoaded && (
+          <motion.div
+            className={styles.loadingOverlay}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className={styles.loadingText}>Loading map...</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        {/* Active place tooltip */}
-        <AnimatePresence>
-          {activePlace && (
-            <motion.div
-              className={styles.tooltip}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <span className={styles.tooltipName}>{activePlace.name}</span>
-              <span className={`${styles.tooltipType} ${activePlace.type === 'lived' ? styles.tooltipTypeLived : styles.tooltipTypeTraveled}`}>
-                {activePlace.type === 'lived' ? 'Lived' : 'Traveled'}
-              </span>
-              {activePlace.visited && (
-                <span className={styles.tooltipYear}>{activePlace.visited}</span>
-              )}
-              {activePlace.note && (
-                <span className={styles.tooltipNote}>{activePlace.note}</span>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Place list */}
-      <div className={styles.placeList}>
-        <div className={styles.placeListHeader}>
-          <span className={styles.placeListTitle}>Places</span>
-          <button className={styles.resetButton} onClick={handleResetView}>
-            Reset view
-          </button>
-        </div>
-        {/* Grouped by country. Continues a single stagger index across
-            groups so the entrance animation reads as one sweep, not a
-            restart per section. */}
-        {(() => {
-          let idx = 0;
-          return (
-            <div className={styles.placeGroups}>
-              {groups.map((group) => (
-                <section key={group.country} className={styles.placeGroup}>
-                  <h4 className={styles.placeGroupTitle}>
-                    <span>{group.country}</span>
-                    <span className={styles.placeGroupCount}>
-                      {group.places.length}
-                    </span>
-                  </h4>
-                  <ul className={styles.places}>
-                    {group.places.map((place) => {
-                      const i = idx++;
-                      return (
-                        <motion.li
-                          key={place.name}
-                          className={`${styles.placeItem} ${activePlace?.name === place.name ? styles.placeItemActive : ''}`}
-                          data-type={place.type}
-                          onClick={() => handlePlaceClick(place)}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: i * 0.05 }}
-                        >
-                          <span className={`${styles.placeIndicator} ${place.type === 'lived' ? styles.placeIndicatorLived : styles.placeIndicatorTraveled}`} />
-                          <span className={styles.placeName}>{place.city}</span>
-                          {place.visited && (
-                            <span className={styles.placeYear}>{place.visited}</span>
-                          )}
-                        </motion.li>
-                      );
-                    })}
-                  </ul>
-                </section>
-              ))}
-            </div>
-          );
-        })()}
-      </div>
+      {/* Active place tooltip */}
+      <AnimatePresence>
+        {activePlace && (
+          <motion.div
+            className={styles.tooltip}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
+          >
+            <span className={styles.tooltipName}>{activePlace.name}</span>
+            <span className={`${styles.tooltipType} ${activePlace.type === 'lived' ? styles.tooltipTypeLived : styles.tooltipTypeTraveled}`}>
+              {activePlace.type === 'lived' ? 'Lived' : 'Traveled'}
+            </span>
+            {activePlace.visited && (
+              <span className={styles.tooltipYear}>{activePlace.visited}</span>
+            )}
+            {activePlace.note && (
+              <span className={styles.tooltipNote}>{activePlace.note}</span>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

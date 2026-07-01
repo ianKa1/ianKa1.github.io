@@ -15,7 +15,9 @@
       "mcp__ide__getDiagnostics",
       "Bash(npm run geocode:*)",
       "Bash(wc:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)"
     ]
   }
 }

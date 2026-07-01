@@ -4,9 +4,8 @@ import type { Category } from '../types';
 import { Gallery } from './Gallery';
 import { ProjectGrid } from './ProjectGrid';
 import { ProjectDetail } from './ProjectDetail';
-import { InteractiveMap } from './InteractiveMap';
+import { Traces } from '../sections/traces/Traces';
 import { Words } from './Words';
-import { places, placeGroups } from '../data/places';
 import { projects, type Project } from '../data/projects';
 import { visuals } from '../data/visuals';
 import styles from './Content.module.css';
@@ -158,7 +157,7 @@ export function Content({ activeCategory }: ContentProps) {
                 Places I've inhabited, however briefly. Each mark on the map
                 is a chapter read in the language of a city.
               </p>
-              <InteractiveMap places={places} groups={placeGroups} />
+              <Traces />
             </motion.section>
           )}
         </AnimatePresence>
