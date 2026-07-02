@@ -1,6 +1,6 @@
 import { AnimatePresence } from 'motion/react';
 import { Entry } from '../sections/entry/Entry';
-import { Systems } from '../sections/systems/Systems';
+import { Tech } from '../sections/tech/Tech';
 import { Words } from '../sections/words/Words';
 import { Visuals } from '../sections/visuals/Visuals';
 import { Traces } from '../sections/traces/Traces';
@@ -14,7 +14,7 @@ interface SectionRouterProps {
 
 /**
  * Pure switch on the active category. Sections that own sub-views
- * (Systems, Words, Traces) receive slugs from the route and a `navigate`
+ * (Tech, Words, Traces) receive slugs from the route and a `navigate`
  * function so they can update the URL when the user drills in or
  * backs out.
  */
@@ -25,12 +25,12 @@ export function SectionRouter({ route, navigate }: SectionRouterProps) {
       <div className={styles.content}>
         <AnimatePresence mode="wait">
           {category === 'entry' && <Entry key="entry" />}
-          {category === 'systems' && (
-            <Systems
-              key="systems"
+          {category === 'tech' && (
+            <Tech
+              key="tech"
               projectId={route.projectId}
-              onSelectProject={(projectId) => navigate({ category: 'systems', projectId })}
-              onBack={() => navigate({ category: 'systems' })}
+              onSelectProject={(projectId) => navigate({ category: 'tech', projectId })}
+              onBack={() => navigate({ category: 'tech' })}
             />
           )}
           {category === 'words' && (

@@ -3,7 +3,7 @@ import type { Category } from '../types';
 /**
  * Flat description of the current view. `category` is always defined;
  * the section-specific slots are populated only when a subview is open
- * (e.g. `projectId` for `#/systems/project-4`).
+ * (e.g. `projectId` for `#/tech/project-4`).
  *
  * The URL is the single source of truth — every sub-view (project detail,
  * article reader, active place) sets exactly one of these optional fields.
@@ -17,7 +17,7 @@ export interface RouteState {
 
 const CATEGORIES: readonly Category[] = [
   'entry',
-  'systems',
+  'tech',
   'words',
   'visuals',
   'traces',
@@ -33,7 +33,7 @@ function isCategory(value: string): value is Category {
  * categories collapse to `entry`.
  */
 export function parseHash(hash: string): RouteState {
-  // Drop leading `#` and any leading slashes so `#/systems` and `#systems`
+  // Drop leading `#` and any leading slashes so `#/tech` and `#tech`
   // both parse.
   const raw = hash.replace(/^#/, '').replace(/^\/+/, '');
   if (!raw) return { category: 'entry' };
@@ -45,7 +45,7 @@ export function parseHash(hash: string): RouteState {
   if (!slug) return { category };
 
   switch (category) {
-    case 'systems':
+    case 'tech':
       return { category, projectId: slug };
     case 'words':
       return { category, articleSlug: slug };
@@ -58,7 +58,7 @@ export function parseHash(hash: string): RouteState {
 }
 
 /**
- * Format a `RouteState` back into a hash string like `#/systems/project-4`.
+ * Format a `RouteState` back into a hash string like `#/tech/project-4`.
  * The `entry` root collapses to `#/` so the URL stays clean on the
  * landing page.
  */

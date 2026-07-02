@@ -1,4 +1,4 @@
-export type Category = 'entry' | 'systems' | 'words' | 'visuals' | 'traces';
+export type Category = 'entry' | 'tech' | 'words' | 'visuals' | 'traces';
 
 export interface CategoryConfig {
   id: Category;
@@ -17,11 +17,11 @@ export const CATEGORIES: CategoryConfig[] = [
     colorDeep: 'var(--entry-warm)',
   },
   {
-    id: 'systems',
-    label: 'Systems',
+    id: 'tech',
+    label: 'Tech',
     number: '01',
-    color: 'var(--systems-blue)',
-    colorDeep: 'var(--systems-blue-deep)',
+    color: 'var(--tech-blue)',
+    colorDeep: 'var(--tech-blue-deep)',
   },
   {
     id: 'words',

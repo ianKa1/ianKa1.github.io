@@ -11,7 +11,7 @@ export function ProjectGrid({ projects, onProjectClick }: ProjectGridProps) {
   if (projects.length === 0) {
     return (
       <div className={styles.empty}>
-        <p>No projects yet. Add media to <code>/public/images/systems/</code></p>
+        <p>No projects yet. Add media to <code>/public/images/tech/</code></p>
       </div>
     );
   }

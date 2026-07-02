@@ -41,7 +41,7 @@
 }
 
 /* Category color accents */
-.section[data-section="systems"] .title { color: var(--systems-blue-deep); }
+.section[data-section="tech"] .title { color: var(--tech-blue-deep); }
 .section[data-section="words"] .title { color: var(--words-red-deep); }
 .section[data-section="visuals"] .title { color: var(--visuals-pink-deep); }
 .section[data-section="traces"] .title { color: var(--traces-ink-deep); }

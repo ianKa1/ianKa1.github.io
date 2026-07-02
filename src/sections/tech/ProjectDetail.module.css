@@ -19,7 +19,7 @@
 }
 
 .backButton:hover {
-  color: var(--systems-blue-deep);
+  color: var(--tech-blue-deep);
 }
 
 .arrow {
@@ -50,7 +50,7 @@
   font-size: 0.6875rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--systems-blue-deep);
+  color: var(--tech-blue-deep);
   background: rgba(123, 163, 204, 0.12);
   padding: 0.25rem 0.625rem;
   border-radius: 3px;
@@ -60,7 +60,7 @@
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 300;
-  color: var(--systems-blue-deep);
+  color: var(--tech-blue-deep);
   line-height: 1.2;
   margin: 0;
   letter-spacing: -0.02em;
@@ -148,7 +148,7 @@
 }
 
 .markdown a {
-  color: var(--systems-blue-deep);
+  color: var(--tech-blue-deep);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;

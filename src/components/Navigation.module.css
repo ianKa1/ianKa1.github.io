@@ -84,7 +84,7 @@
 }
 
 .item[data-category="entry"] .accent { background: var(--entry-warm); }
-.item[data-category="systems"] .accent { background: var(--systems-blue-deep); }
+.item[data-category="tech"] .accent { background: var(--tech-blue-deep); }
 .item[data-category="words"] .accent { background: var(--words-red-deep); }
 .item[data-category="visuals"] .accent { background: var(--visuals-pink-deep); }
 .item[data-category="traces"] .accent { background: var(--traces-ink-deep); }
@@ -102,8 +102,8 @@
 
 .item[data-category="entry"]:hover .label,
 .item[data-category="entry"].active .label { color: #8B7355; }
-.item[data-category="systems"]:hover .label,
-.item[data-category="systems"].active .label { color: var(--systems-blue-deep); }
+.item[data-category="tech"]:hover .label,
+.item[data-category="tech"].active .label { color: var(--tech-blue-deep); }
 .item[data-category="words"]:hover .label,
 .item[data-category="words"].active .label { color: var(--words-red-deep); }
 .item[data-category="visuals"]:hover .label,

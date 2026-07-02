@@ -7,7 +7,7 @@ interface SectionShellProps {
   /** Drives the section's accent styling and animation key. */
   id: Category | `${Category}:${string}`;
   /** The active category — used for the `data-section` accent hook.
-   *  Written separately from `id` so Systems can swap keys between the
+   *  Written separately from `id` so Tech can swap keys between the
    *  grid and detail views without losing its accent color. */
   category: Category;
   children: ReactNode;

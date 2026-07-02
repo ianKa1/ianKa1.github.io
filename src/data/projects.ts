@@ -1,5 +1,5 @@
 /**
- * Systems projects are authored as one directory per project under
+ * Tech projects are authored as one directory per project under
  * `src/data/projects/<id>/`, each holding a `project.md` (metadata +
  * long-form body) and any colocated media (`thumbnail.mp4`, images,
  * clips referenced by the body).

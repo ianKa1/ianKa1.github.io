@@ -25,7 +25,7 @@ function App() {
   // a broken entry.
   useEffect(() => {
     if (route.projectId && !projects.some((p) => p.id === route.projectId)) {
-      replace({ category: 'systems' });
+      replace({ category: 'tech' });
       return;
     }
     if (route.articleSlug && !articles.some((a) => a.slug === route.articleSlug)) {
