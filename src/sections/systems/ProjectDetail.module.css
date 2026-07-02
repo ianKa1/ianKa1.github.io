@@ -99,8 +99,7 @@
 }
 
 .section {
-  padding-left: 1.5rem;
-  border-left: 2px solid var(--systems-blue);
+  padding: 0;
 }
 
 .sectionTitle {
@@ -111,21 +110,15 @@
   margin: 0 0 1rem 0;
 }
 
-.text {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
 /* ReactMarkdown output. Elements are rendered without CSS-module classes,
-   so we style them via descendant selectors on `.markdown`. */
+   so we style them via descendant selectors on `.markdown`.
+   Body uses the display serif so prose and KaTeX math (KaTeX_Main serif)
+   harmonize; without this, sans-serif prose + serif math looks discordant. */
 .markdown {
-  font-family: var(--font-body);
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
   line-height: 1.8;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .markdown > * + * {
@@ -191,7 +184,14 @@
   min-width: 120px;
 }
 
-/* KaTeX display equations get a bit of breathing room. */
+/* KaTeX ships with `font-size: 1.21em` on `.katex`, making inline math
+   ~21% larger than the surrounding prose. Pin it back to 1em so `$x_0$`
+   sits at the same optical size as its sentence. Display equations
+   still get their own line and vertical breathing room below. */
+.markdown :global(.katex) {
+  font-size: 1em;
+}
+
 .markdown :global(.katex-display) {
   margin: 1rem 0;
   overflow-x: auto;
@@ -211,8 +211,8 @@
     font-size: 1.25rem;
   }
 
-  .text {
-    font-size: 1.0625rem;
+  .markdown {
+    font-size: 1.125rem;
   }
 }
 
@@ -248,18 +248,13 @@
     gap: 3rem;
   }
 
-  .section {
-    padding-left: 2rem;
-    border-left-width: 3px;
-  }
-
   .sectionTitle {
     font-size: 1.5rem;
     margin-bottom: 1.25rem;
   }
 
-  .text {
-    font-size: 1.125rem;
+  .markdown {
+    font-size: 1.1875rem;
     line-height: 1.85;
   }
 }
@@ -276,9 +271,5 @@
   .hero {
     margin: 0 -2rem 2rem;
     border-radius: 0;
-  }
-
-  .section {
-    padding-left: 1rem;
   }
 }
