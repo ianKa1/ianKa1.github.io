@@ -7,6 +7,13 @@
  * The directory name becomes the project `id`, and directories are
  * loaded in ascending name order so authors can control card order
  * by renaming (e.g. prefixing `01-`, `02-`).
+ *
+ * The body is CommonMark markdown with math delimiters (`$...$` and
+ * `$$...$$`). Rendering is handled downstream by react-markdown +
+ * remark-math + rehype-katex; this loader only carves the file into
+ * `## Heading` sections and rewrites relative image paths so
+ * `![](figure.png)` and `![](results/foo.png)` resolve against the
+ * project directory's colocated media.
  */
 
 // Raw markdown for every project.
@@ -16,11 +23,12 @@ const projectFiles = import.meta.glob<string>('./projects/*/project.md', {
   eager: true,
 });
 
-// URL-resolved media colocated with each project. Keyed by full path so
-// each project's markdown can reference files by filename and we can
-// look them up in this map without walking the filesystem at runtime.
+// URL-resolved media colocated with each project (including nested
+// subdirectories like `results/city0.png`). Keyed by full glob path
+// so `project.md` can reference files by relative path and we can
+// look them up without walking the filesystem at runtime.
 const projectMedia = import.meta.glob<string>(
-  './projects/*/*.{mp4,webm,ogg,mov,m4v,png,jpg,jpeg,gif,webp,avif,svg}',
+  './projects/*/**/*.{mp4,webm,ogg,mov,m4v,png,jpg,jpeg,gif,webp,avif,svg}',
   {
     query: '?url',
     import: 'default',
@@ -31,7 +39,8 @@ const projectMedia = import.meta.glob<string>(
 /** One `## Heading` section of the long-form body. */
 export interface ProjectSection {
   heading: string;
-  paragraphs: string[];
+  /** Raw markdown body for the section (paragraphs, lists, images, math). */
+  body: string;
 }
 
 export interface Project {
@@ -55,39 +64,36 @@ function isVideoFile(filename: string): boolean {
 /**
  * Split a project.md into a metadata header (`Key: Value` lines until
  * the first blank line) and a body that's carved up by `## Heading`
- * lines into sections of blank-line-separated paragraphs.
+ * lines into sections. Each section's body is kept as raw markdown so
+ * the renderer downstream can handle lists, math, images, etc.
  */
 function parseProjectMarkdown(md: string): {
   meta: Record<string, string>;
   sections: ProjectSection[];
 } {
-  // Same HTML-comment strip as the article parser so `<!-- ... -->` can
-  // hide drafts without confusing the section scanner.
+  // Strip HTML comments so `<!-- ... -->` can hide drafts without
+  // confusing the section scanner.
   const stripped = md.replace(/<!--[\s\S]*?-->/g, '');
   const meta: Record<string, string> = {};
   const sections: ProjectSection[] = [];
 
   let inBody = false;
   let currentSection: ProjectSection | null = null;
-  let paragraphBuf: string[] = [];
-
-  const flushParagraph = () => {
-    if (paragraphBuf.length && currentSection) {
-      currentSection.paragraphs.push(paragraphBuf.join(' '));
-      paragraphBuf = [];
-    }
-  };
+  let bodyLines: string[] = [];
 
   const flushSection = () => {
-    flushParagraph();
-    if (currentSection) sections.push(currentSection);
+    if (currentSection) {
+      currentSection.body = bodyLines.join('\n').replace(/^\n+|\n+$/g, '');
+      sections.push(currentSection);
+    }
     currentSection = null;
+    bodyLines = [];
   };
 
-  for (const rawLine of stripped.split(/\r?\n/)) {
-    const trimmed = rawLine.trim();
-
+  const lines = stripped.split(/\r?\n/);
+  for (const rawLine of lines) {
     if (!inBody) {
+      const trimmed = rawLine.trim();
       if (trimmed === '') {
         if (Object.keys(meta).length > 0) inBody = true;
         continue;
@@ -105,12 +111,7 @@ function parseProjectMarkdown(md: string): {
     const heading = /^##\s+(.+?)\s*$/.exec(rawLine);
     if (heading) {
       flushSection();
-      currentSection = { heading: heading[1], paragraphs: [] };
-      continue;
-    }
-
-    if (trimmed === '') {
-      flushParagraph();
+      currentSection = { heading: heading[1], body: '' };
       continue;
     }
 
@@ -118,7 +119,7 @@ function parseProjectMarkdown(md: string): {
     // start with a heading; the type contract doesn't model an untitled
     // preamble.
     if (!currentSection) continue;
-    paragraphBuf.push(trimmed);
+    bodyLines.push(rawLine);
   }
 
   flushSection();
@@ -131,6 +132,30 @@ function parseTags(raw: string | undefined): string[] | undefined {
   if (!raw) return undefined;
   const tags = raw.split(',').map((t) => t.trim()).filter(Boolean);
   return tags.length ? tags : undefined;
+}
+
+/**
+ * Rewrite `![alt](relative/path.png)` occurrences in a section body so
+ * they point at the URLs Vite emits for colocated media. Absolute URLs
+ * (`http://`, `https://`, `//`, `data:`) are left untouched.
+ */
+function rewriteMediaPaths(body: string, projectId: string): string {
+  return body.replace(
+    /(!\[[^\]]*\]\()([^)\s]+)(\s*(?:"[^"]*")?\s*\))/g,
+    (match, prefix: string, url: string, suffix: string) => {
+      if (/^(https?:)?\/\//i.test(url) || url.startsWith('data:')) return match;
+      const normalized = url.replace(/^\.\//, '');
+      const mediaKey = `./projects/${projectId}/${normalized}`;
+      const resolved = projectMedia[mediaKey];
+      if (!resolved) {
+        if (import.meta.env.DEV) {
+          console.warn(`[projects] ${projectId}: image "${url}" not found in project directory`);
+        }
+        return match;
+      }
+      return `${prefix}${resolved}${suffix}`;
+    },
+  );
 }
 
 function loadProjects(): Project[] {
@@ -178,6 +203,13 @@ function loadProjects(): Project[] {
           ? 'video'
           : 'image';
 
+    // Rewrite image references in each section body so the renderer
+    // receives fully-resolved URLs.
+    const resolvedSections = sections.map((section) => ({
+      heading: section.heading,
+      body: rewriteMediaPaths(section.body, id),
+    }));
+
     projects.push({
       id,
       title: meta.title,
@@ -186,7 +218,7 @@ function loadProjects(): Project[] {
       thumbnailType,
       year: meta.year,
       tags: parseTags(meta.tags),
-      sections,
+      sections: resolvedSections,
     });
   }
 

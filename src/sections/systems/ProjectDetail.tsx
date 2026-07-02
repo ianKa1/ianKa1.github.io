@@ -1,4 +1,7 @@
 import { motion } from 'motion/react';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import type { Project } from '../../data/projects';
 import styles from './ProjectDetail.module.css';
 
@@ -6,6 +9,9 @@ interface ProjectDetailProps {
   project: Project;
   onBack: () => void;
 }
+
+const remarkPlugins = [remarkMath];
+const rehypePlugins = [rehypeKatex];
 
 export function ProjectDetail({ project, onBack }: ProjectDetailProps) {
   return (
@@ -80,9 +86,14 @@ export function ProjectDetail({ project, onBack }: ProjectDetailProps) {
         {project.sections.map((section) => (
           <section key={section.heading} className={styles.section}>
             <h2 className={styles.sectionTitle}>{section.heading}</h2>
-            {section.paragraphs.map((para, i) => (
-              <p key={i} className={styles.text}>{para}</p>
-            ))}
+            <div className={styles.markdown}>
+              <ReactMarkdown
+                remarkPlugins={remarkPlugins}
+                rehypePlugins={rehypePlugins}
+              >
+                {section.body}
+              </ReactMarkdown>
+            </div>
           </section>
         ))}
       </motion.div>
