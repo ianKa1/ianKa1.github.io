@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { articles, SECTION_BREAK, type Article } from '../../data/articles';
 import { bookGroups } from '../../data/books';
@@ -6,11 +6,20 @@ import { SectionShell } from '../../content/SectionShell';
 import sectionStyles from '../../content/SectionShell.module.css';
 import styles from './Words.module.css';
 
+interface WordsProps {
+  /** Slug of the open article, or undefined to show the library. */
+  articleSlug: string | undefined;
+  onSelectArticle: (slug: string) => void;
+  onBack: () => void;
+}
+
 /**
  * Words section: writes the shared heading and intro, then delegates to
  * the library body (which owns its own library ↔ reader transition).
+ * URL-driven: the parent supplies the article slug and navigation
+ * callbacks.
  */
-export function Words() {
+export function Words({ articleSlug, onSelectArticle, onBack }: WordsProps) {
   return (
     <SectionShell id="words" category="words">
       <h1 className={sectionStyles.title}>Words</h1>
@@ -19,7 +28,11 @@ export function Words() {
         philosophy, essays that changed how I see things, and my own attempts
         to articulate ideas.
       </p>
-      <WordsBody />
+      <WordsBody
+        articleSlug={articleSlug}
+        onSelectArticle={onSelectArticle}
+        onBack={onBack}
+      />
     </SectionShell>
   );
 }
@@ -57,8 +70,10 @@ function formatReading(reading: string): string {
   return reading.replace(/min$/, 'min read').replace(/min read read$/, 'min read');
 }
 
-function WordsBody() {
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+function WordsBody({ articleSlug, onSelectArticle, onBack }: WordsProps) {
+  const selectedArticle: Article | null = articleSlug
+    ? articles.find((a) => a.slug === articleSlug) ?? null
+    : null;
   const articleCount = articles.length;
   const volumeCount = bookGroups.reduce((sum, g) => sum + g.books.length, 0);
   const yearCount = bookGroups.filter((g) => g.year !== null).length;
@@ -68,9 +83,9 @@ function WordsBody() {
       <AnimatePresence mode="wait">
         {selectedArticle ? (
           <ArticleReader
-            key={`reader-${selectedArticle.title}`}
+            key={`reader-${selectedArticle.slug}`}
             article={selectedArticle}
-            onBack={() => setSelectedArticle(null)}
+            onBack={onBack}
           />
         ) : (
           <motion.div
@@ -177,7 +192,7 @@ function WordsBody() {
                 <button
                   type="button"
                   className={styles.articleTitleButton}
-                  onClick={() => setSelectedArticle(article)}
+                  onClick={() => onSelectArticle(article.slug)}
                 >
                   {article.title}
                 </button>
@@ -194,7 +209,7 @@ function WordsBody() {
                 <button
                   type="button"
                   className={styles.readOn}
-                  onClick={() => setSelectedArticle(article)}
+                  onClick={() => onSelectArticle(article.slug)}
                 >
                   keep reading <span aria-hidden="true">→</span>
                 </button>

@@ -1,4 +1,5 @@
 import articlesMarkdown from './articles.md?raw';
+import { titleToSlug } from '../routing/slug';
 
 // Auto-load every long-form article file from ./articles/*.md. Each file is
 // a single self-contained article whose metadata (Title, Date, Reading, Link)
@@ -12,6 +13,8 @@ const longFormFiles = import.meta.glob<string>('./articles/*.md', {
 });
 
 export interface Article {
+  /** URL-safe key derived from the title. Used for `#/words/<slug>`. */
+  slug: string;
   /** Heading text — e.g. "On the geometry of cities". */
   title: string;
   /** ISO `YYYY-MM-DD`. */
@@ -138,6 +141,7 @@ function parseArticlesMarkdown(md: string): Article[] {
     }
     const { excerpt, body } = splitExcerptBody(current.body);
     articles.push({
+      slug: titleToSlug(current.title),
       title: current.title,
       date,
       reading: current.meta.reading,
@@ -231,6 +235,7 @@ function parseArticleFile(md: string, source: string): Article | null {
 
   const { excerpt, body } = splitExcerptBody(bodyLines);
   return {
+    slug: titleToSlug(meta.title),
     title: meta.title,
     date: meta.date,
     reading: meta.reading,

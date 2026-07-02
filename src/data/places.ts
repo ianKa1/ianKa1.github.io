@@ -3,8 +3,11 @@ import type { MultiPolygon, Polygon } from 'geojson';
 import placesMarkdown from './places.md?raw';
 // Coord + boundary cache populated by `scripts/geocode.mjs` from Nominatim.
 import placeCache from './places.cache.json';
+import { placeToSlug } from '../routing/slug';
 
 export interface Place {
+  /** URL-safe key derived from the city name. Used for `#/traces/<slug>`. */
+  slug: string;
   /** Full display name as written in `places.md`, e.g. `"Paris, France"`. */
   name: string;
   /** City half of `name` — everything before the last `, `. Falls back to
@@ -98,6 +101,7 @@ function parsePlacesMarkdown(md: string): Place[] {
     const country = commaIdx >= 0 ? name.slice(commaIdx + 2).trim() : name;
 
     const place: Place = {
+      slug: placeToSlug(city),
       name,
       city,
       country,
