@@ -3,6 +3,7 @@ Subtitle: Description placeholder
 Year: 2024
 Tags: Demo
 Thumbnail: thumbnail.mp4
+Cover: cover.png
 
 ## Overview
 

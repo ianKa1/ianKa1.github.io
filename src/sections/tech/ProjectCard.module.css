@@ -32,6 +32,22 @@
   transform: scale(1.05);
 }
 
+/* When a video sits on top of a still cover image, hide it at rest and
+   fade it in only while the card is hovered. Without this the video's
+   first frame (usually black) shows through and dulls the cover. */
+.media[data-overlay] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.media[data-overlay][data-hovered="true"] {
+  opacity: 1;
+}
+
 .overlay {
   position: absolute;
   inset: 0;

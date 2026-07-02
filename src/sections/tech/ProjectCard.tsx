@@ -13,10 +13,18 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
+  // When a cover image is provided alongside a video thumbnail, the
+  // video sits on top of the still image and fades in on hover. Without
+  // a cover the video is the only layer and just plays on hover.
+  const hasCoverOverlay =
+    project.thumbnailType === 'video' && Boolean(project.cover);
+
   const handleMouseEnter = () => {
     setIsHovered(true);
     if (videoRef.current) {
-      videoRef.current.play();
+      // `play()` returns a promise that can reject if the user leaves
+      // before autoplay commits — swallow it so we don't spam the console.
+      void videoRef.current.play().catch(() => undefined);
     }
   };
 
@@ -42,15 +50,28 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
     >
       <div className={styles.thumbnail}>
         {project.thumbnailType === 'video' ? (
-          <video
-            ref={videoRef}
-            src={project.thumbnail}
-            className={styles.media}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          />
+          <>
+            {project.cover && (
+              <img
+                src={project.cover}
+                alt={project.title}
+                className={styles.media}
+                loading="lazy"
+              />
+            )}
+            <video
+              ref={videoRef}
+              src={project.thumbnail}
+              className={styles.media}
+              data-overlay={hasCoverOverlay || undefined}
+              data-hovered={isHovered}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden={hasCoverOverlay ? true : undefined}
+            />
+          </>
         ) : (
           <img
             src={project.thumbnail}

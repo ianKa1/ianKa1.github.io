@@ -51,6 +51,9 @@ export interface Project {
   /** Resolved URL for the card + hero media. */
   thumbnail: string;
   thumbnailType: 'image' | 'video';
+  /** Optional still-image URL rendered on the card at rest when the
+   *  thumbnail is a video; on hover the video fades in and plays. */
+  cover?: string;
   year?: string;
   tags?: string[];
   /** Long-form body, one entry per `## Heading` in `project.md`. */
@@ -203,6 +206,19 @@ function loadProjects(): Project[] {
           ? 'video'
           : 'image';
 
+    // Optional still-image poster for video thumbnails. Resolved through
+    // the same media map; if the author points at a missing file we
+    // ignore it (dev warning) so the card falls back to the video-only
+    // behaviour instead of breaking the grid.
+    let coverUrl: string | undefined;
+    if (meta.cover) {
+      const coverKey = `./projects/${id}/${meta.cover}`;
+      coverUrl = projectMedia[coverKey];
+      if (!coverUrl && import.meta.env.DEV) {
+        console.warn(`[projects] ${id}: cover "${meta.cover}" not found in project directory`);
+      }
+    }
+
     // Rewrite image references in each section body so the renderer
     // receives fully-resolved URLs.
     const resolvedSections = sections.map((section) => ({
@@ -216,6 +232,7 @@ function loadProjects(): Project[] {
       subtitle: meta.subtitle,
       thumbnail: thumbnailUrl,
       thumbnailType,
+      cover: coverUrl,
       year: meta.year,
       tags: parseTags(meta.tags),
       sections: resolvedSections,
