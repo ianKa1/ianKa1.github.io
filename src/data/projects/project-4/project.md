@@ -2,7 +2,8 @@ Title: Image Interpolation with Diffusion Models
 Subtitle: Reproducing a training-free diffusion interpolation pipeline
 Year: 2026
 Tags: Diffusion, Research, Reproduction
-Thumbnail: interpolation_process.png
+Thumbnail: thumbnail.mp4
+Cover: cover.png
 
 ## Overview
 
