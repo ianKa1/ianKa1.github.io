@@ -164,8 +164,8 @@ function rewriteMediaPaths(body: string, projectId: string): string {
 function loadProjects(): Project[] {
   const projects: Project[] = [];
 
-  // Iterate in stable, name-ascending order so authors control card
-  // order via directory naming.
+  // Iterate in stable, name-ascending order; the final list is re-sorted
+  // by `Year` descending below, with directory name as tiebreaker.
   const entries = Object.entries(projectFiles).sort(([a], [b]) => a.localeCompare(b));
 
   for (const [path, md] of entries) {
@@ -238,6 +238,20 @@ function loadProjects(): Project[] {
       sections: resolvedSections,
     });
   }
+
+  // Sort by Year descending so newer projects appear first. Projects
+  // without a Year sort to the end; ties fall back to directory name so
+  // ordering stays stable.
+  projects.sort((a, b) => {
+    const yearA = a.year ? parseInt(a.year, 10) : NaN;
+    const yearB = b.year ? parseInt(b.year, 10) : NaN;
+    const hasA = Number.isFinite(yearA);
+    const hasB = Number.isFinite(yearB);
+    if (hasA && hasB && yearA !== yearB) return yearB - yearA;
+    if (hasA && !hasB) return -1;
+    if (!hasA && hasB) return 1;
+    return a.id.localeCompare(b.id);
+  });
 
   return projects;
 }
