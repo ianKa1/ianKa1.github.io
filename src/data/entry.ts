@@ -7,7 +7,7 @@ import entryRaw from './entry.md?raw';
  *   1. Bio — one or more paragraphs of self-introduction
  *   2. Motivation — a single continuation line (why America)
  *   3. Favorites — `Label: Value` lines, one per row
- *   4. Motto — the closing epigraph
+ *   4. Mottos — one per paragraph
  */
 export interface EntryContent {
   bio: string[];
@@ -15,7 +15,8 @@ export interface EntryContent {
   /** Lead-in sentence above the favorites list. */
   favoritesIntro: string;
   favorites: { label: string; value: string }[];
-  motto: string;
+  /** One motto per paragraph (blank-line separated) in the last block. */
+  mottos: string[];
 }
 
 /** Split raw markdown into blocks on lone `---` lines. */
@@ -64,7 +65,7 @@ function parseEntry(raw: string): EntryContent {
     motivation: toParagraphs(motivationLines).join(' '),
     favoritesIntro: introLines.join(' '),
     favorites,
-    motto: toParagraphs(mottoLines).join(' '),
+    mottos: toParagraphs(mottoLines),
   };
 }
 

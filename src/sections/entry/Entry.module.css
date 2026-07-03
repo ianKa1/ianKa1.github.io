@@ -86,6 +86,16 @@
     box-shadow var(--transition-medium);
 }
 
+/* Second (and every even) card leans the other way, like notes
+   pinned by hand. */
+.mottoCard:nth-child(even) {
+  transform: rotate(-1.6deg);
+}
+
+.mottoCard + .mottoCard {
+  margin-top: 1.5rem;
+}
+
 .mottoCard:hover {
   transform: rotate(0deg) translateY(-2px);
   box-shadow:

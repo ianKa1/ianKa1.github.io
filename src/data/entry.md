@@ -15,3 +15,5 @@ Writer: Albert Camus
 ---
 
 Put a dent in the universe. Otherwise, what's the point of being here?
+
+Do not let the rat race kill your curiosity.

@@ -16,9 +16,11 @@ export function Entry() {
           right of the column; on medium screens it floats inside the
           column and the bio wraps around it. Always above the fold. */}
       <aside className={styles.mottoSlot}>
-        <div className={styles.mottoCard}>
-          <p className={styles.mottoText}>{entryContent.motto}</p>
-        </div>
+        {entryContent.mottos.map((motto) => (
+          <div key={motto.slice(0, 24)} className={styles.mottoCard}>
+            <p className={styles.mottoText}>{motto}</p>
+          </div>
+        ))}
       </aside>
 
       {entryContent.bio.map((paragraph) => (
