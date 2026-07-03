@@ -17,7 +17,22 @@
       "Bash(wc:*)",
       "Bash(npx tsc:*)",
       "Bash(git mv:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npm run lint:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(npx oxlint:*)",
+      "Bash(lsof:*)",
+      "Bash(pkill:*)",
+      "Bash(done)",
+      "Bash(for f in /Users/kaimao/persona/src/data/projects/project-*/cover.png /Users/kaimao/persona/src/data/projects/project-*/thumbnail.mp4)",
+      "Bash(do echo \"$f:\")",
+      "Bash(if [[ \"$f\" == *.mp4 ]])",
+      "Bash(then ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 \"$f\")",
+      "Bash(else sips -g pixelWidth -g pixelHeight \"$f\")",
+      "Bash(fi)",
+      "Bash(ffprobe:*)",
+      "Bash(ffmpeg:*)"
     ]
   }
 }
