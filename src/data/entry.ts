@@ -1,21 +1,20 @@
 import entryRaw from './entry.md?raw';
 
 /**
- * Entry page content, authored in `entry.md` as four blocks separated by
- * lone `---` lines, in fixed order:
+ * Entry page content, authored in `entry.md` as blocks separated by
+ * lone `---` lines. Blocks are identified by content, not position:
  *
- *   1. Bio — one or more paragraphs of self-introduction
- *   2. Motivation — a single continuation line (why America)
- *   3. Favorites — `Label: Value` lines, one per row
- *   4. Mottos — one per paragraph
+ *   - The favorites block is the one containing `Label: Value` lines
+ *     (any other lines in it become the lead-in sentence).
+ *   - Everything before it is bio — any number of paragraph blocks.
+ *   - Everything after it is mottos — one motto per paragraph.
  */
 export interface EntryContent {
   bio: string[];
-  motivation: string;
   /** Lead-in sentence above the favorites list. */
   favoritesIntro: string;
   favorites: { label: string; value: string }[];
-  /** One motto per paragraph (blank-line separated) in the last block. */
+  /** One motto per paragraph; each renders as its own wall card. */
   mottos: string[];
 }
 
@@ -46,26 +45,35 @@ function toParagraphs(lines: string[]): string[] {
   return paragraphs;
 }
 
+const FAVORITE_LINE = /^([^:]+):\s*(.+)$/;
+
 function parseEntry(raw: string): EntryContent {
-  const [bioLines = [], motivationLines = [], favoriteLines = [], mottoLines = []] =
-    splitBlocks(raw);
+  const blocks = splitBlocks(raw);
+
+  // The favorites block is the one that contains `Label: Value` lines.
+  const favIndex = blocks.findIndex((lines) =>
+    lines.some((line) => FAVORITE_LINE.test(line.trim())),
+  );
+
+  const bioBlocks = favIndex === -1 ? blocks : blocks.slice(0, favIndex);
+  const favoriteLines = favIndex === -1 ? [] : blocks[favIndex];
+  const mottoBlocks = favIndex === -1 ? [] : blocks.slice(favIndex + 1);
 
   // `Label: Value` lines become rows; any other non-blank lines form
   // the intro sentence shown above the list.
   const favorites: EntryContent['favorites'] = [];
   const introLines: string[] = [];
   for (const line of favoriteLines) {
-    const match = line.match(/^([^:]+):\s*(.+)$/);
+    const match = line.trim().match(FAVORITE_LINE);
     if (match) favorites.push({ label: match[1].trim(), value: match[2].trim() });
     else if (line.trim()) introLines.push(line.trim());
   }
 
   return {
-    bio: toParagraphs(bioLines),
-    motivation: toParagraphs(motivationLines).join(' '),
+    bio: bioBlocks.flatMap(toParagraphs),
     favoritesIntro: introLines.join(' '),
     favorites,
-    mottos: toParagraphs(mottoLines),
+    mottos: mottoBlocks.flatMap(toParagraphs),
   };
 }
 

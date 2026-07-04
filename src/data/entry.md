@@ -6,6 +6,10 @@ I came to America because I was fascinated by the founding ideals of this countr
 
 ---
 
+I want to make the world a little more interesting.
+
+---
+
 My favorite —
 
 Anime: Attack on Titan

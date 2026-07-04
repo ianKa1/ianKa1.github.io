@@ -23,14 +23,12 @@ export function Entry() {
         ))}
       </aside>
 
+      {/* Bio — every paragraph block before the favorites, in one voice. */}
       {entryContent.bio.map((paragraph) => (
         <p key={paragraph.slice(0, 24)} className={sectionStyles.text}>
           {paragraph}
         </p>
       ))}
-
-      {/* Motivation — its own paragraph, same voice as the bio. */}
-      <p className={sectionStyles.text}>{entryContent.motivation}</p>
 
       {/* Favorites — set like object labels in a gallery catalog. */}
       <p className={styles.favoritesIntro}>{entryContent.favoritesIntro}</p>
