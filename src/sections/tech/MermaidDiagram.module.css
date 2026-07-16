@@ -1,0 +1,21 @@
+.diagram {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.fallback {
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
+  background: rgba(123, 163, 204, 0.08);
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}

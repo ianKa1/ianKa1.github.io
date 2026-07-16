@@ -1,8 +1,11 @@
 import { motion } from 'motion/react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import type { Element } from 'hast';
 import type { Project } from '../../data/projects';
+import { MermaidDiagram } from './MermaidDiagram';
 import styles from './ProjectDetail.module.css';
 
 interface ProjectDetailProps {
@@ -10,8 +13,36 @@ interface ProjectDetailProps {
   onBack: () => void;
 }
 
-const remarkPlugins = [remarkMath];
+const remarkPlugins = [remarkGfm, remarkMath];
 const rehypePlugins = [rehypeKatex];
+
+/* If a fenced code block is ```mermaid, pull its source text out of the
+   hast node so the block can be swapped for a rendered diagram. */
+function mermaidSource(pre: Element | undefined): string | null {
+  const code = pre?.children?.[0];
+  if (!code || code.type !== 'element' || code.tagName !== 'code') return null;
+  const className = code.properties?.className;
+  if (!Array.isArray(className) || !className.includes('language-mermaid')) {
+    return null;
+  }
+  const text = code.children[0];
+  return text?.type === 'text' ? text.value : null;
+}
+
+const markdownComponents: Components = {
+  pre({ node, children, ...props }) {
+    const chart = mermaidSource(node);
+    if (chart) return <MermaidDiagram chart={chart} />;
+    return <pre {...props}>{children}</pre>;
+  },
+  table({ node: _node, children, ...props }) {
+    return (
+      <div className={styles.tableWrap}>
+        <table {...props}>{children}</table>
+      </div>
+    );
+  },
+};
 
 export function ProjectDetail({ project, onBack }: ProjectDetailProps) {
   return (
@@ -90,6 +121,7 @@ export function ProjectDetail({ project, onBack }: ProjectDetailProps) {
               <ReactMarkdown
                 remarkPlugins={remarkPlugins}
                 rehypePlugins={rehypePlugins}
+                components={markdownComponents}
               >
                 {section.body}
               </ReactMarkdown>
