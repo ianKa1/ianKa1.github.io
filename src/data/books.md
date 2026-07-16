@@ -64,6 +64,7 @@ Entries below are placeholders — replace with your own.
 | 1Q84                                        | 村上春树 / Murakami, Haruki             |          |      |
 | 罗生门 / Rashomon                           | 芥川龙之介 / Akutagawa, Ryunosuke       |          |      |
 | 月亮与六便士 / The Moon and Sixpence        | 毛姆 / Maugham, W. Somerset             |          |      |
+| 老人与海 / The Old Man and the Sea          | 海明威 / Hemingway, Ernest              |          |      |
 | 瓦尔登湖 / Walden                           | 梭罗 / Thoreau, Henry David             |          |      |
 | 自卑与超越 / What Life Should Mean to You   | 阿德勒 / Adler, Alfred                  |          |      |
 | 非暴力沟通 / Nonviolent Communication       | 卢森堡 / Rosenberg, Marshall B.         |          |      |

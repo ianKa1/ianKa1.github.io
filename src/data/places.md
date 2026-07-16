@@ -60,6 +60,9 @@ remove the header or separator rows.
 | Monaco                  | 2025  |      |
 | Philadelphia, USA       | 2025  |      |
 | Miami, USA              | 2026  |      |
+| Boston, USA             | 2026  |      |
+| Washington D.C., USA    | 2026  |      |
+| Singapore               | 2023  |      |
 | Geneva, Switzerland     | 2025  |      |
 | Interlaken, Switzerland | 2025  |      |
 | Zurich, Switzerland     | 2025  |      |
