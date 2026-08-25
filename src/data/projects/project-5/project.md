@@ -1,6 +1,6 @@
 Title: Clay
 Subtitle: Shape ideas into playable games through conversation — no engine required
-Year: 2026
+Year: 2026-06
 Tags: Agents
 Thumbnail: thumbnail.mp4
 Cover: cover.png

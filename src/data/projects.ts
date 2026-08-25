@@ -4,9 +4,9 @@
  * long-form body) and any colocated media (`thumbnail.mp4`, images,
  * clips referenced by the body).
  *
- * The directory name becomes the project `id`, and directories are
- * loaded in ascending name order so authors can control card order
- * by renaming (e.g. prefixing `01-`, `02-`).
+ * The directory name becomes the project `id`. Cards sort by `Year`
+ * descending; `Year: YYYY-MM` refines same-year ordering by month
+ * (descending, month never displayed), then directory name.
  *
  * The body is CommonMark markdown with math delimiters (`$...$` and
  * `$$...$$`). Rendering is handled downstream by react-markdown +
@@ -54,7 +54,10 @@ export interface Project {
   /** Optional still-image URL rendered on the card at rest when the
    *  thumbnail is a video; on hover the video fades in and plays. */
   cover?: string;
+  /** Display year (YYYY only, even when authored as `YYYY-MM`). */
   year?: string;
+  /** Optional month from `Year: YYYY-MM`; refines sort order, never displayed. */
+  month?: number;
   tags?: string[];
   /** Long-form body, one entry per `## Heading` in `project.md`. */
   sections: ProjectSection[];
@@ -219,6 +222,18 @@ function loadProjects(): Project[] {
       }
     }
 
+    // `Year` accepts `YYYY` or `YYYY-MM`; the month refines sort order
+    // only — cards and the detail page display just the year.
+    const yearMatch = meta.year
+      ? /^(\d{4})(?:-(\d{1,2}))?$/.exec(meta.year)
+      : null;
+    const yearParts = yearMatch
+      ? {
+          year: yearMatch[1],
+          month: yearMatch[2] ? parseInt(yearMatch[2], 10) : undefined,
+        }
+      : null;
+
     // Rewrite image references in each section body so the renderer
     // receives fully-resolved URLs.
     const resolvedSections = sections.map((section) => ({
@@ -233,15 +248,17 @@ function loadProjects(): Project[] {
       thumbnail: thumbnailUrl,
       thumbnailType,
       cover: coverUrl,
-      year: meta.year,
+      year: yearParts?.year ?? meta.year,
+      month: yearParts?.month,
       tags: parseTags(meta.tags),
       sections: resolvedSections,
     });
   }
 
   // Sort by Year descending so newer projects appear first. Projects
-  // without a Year sort to the end; ties fall back to directory name so
-  // ordering stays stable.
+  // without a Year sort to the end. Same-year ties break on the month
+  // from `Year: YYYY-MM` (descending, missing month sorts last), then
+  // directory name so ordering stays stable.
   projects.sort((a, b) => {
     const yearA = a.year ? parseInt(a.year, 10) : NaN;
     const yearB = b.year ? parseInt(b.year, 10) : NaN;
@@ -250,6 +267,9 @@ function loadProjects(): Project[] {
     if (hasA && hasB && yearA !== yearB) return yearB - yearA;
     if (hasA && !hasB) return -1;
     if (!hasA && hasB) return 1;
+    const monthA = a.month ?? 0;
+    const monthB = b.month ?? 0;
+    if (monthA !== monthB) return monthB - monthA;
     return a.id.localeCompare(b.id);
   });
 

@@ -32,7 +32,16 @@
       "Bash(else sips -g pixelWidth -g pixelHeight \"$f\")",
       "Bash(fi)",
       "Bash(ffprobe:*)",
-      "Bash(ffmpeg:*)"
+      "Bash(ffmpeg:*)",
+      "Bash(for d in src/data/projects/project-*/)",
+      "Bash(do f=\"$d/thumbnail.mp4\")",
+      "Bash([ -f \"$f\" ])",
+      "Bash(gh run list:*)",
+      "Read(//Users/kaimao/Library/Caches/ms-playwright/**)",
+      "Bash(npm ls *)",
+      "Bash(npm run *)",
+      "Bash(python *)",
+      "Bash(echo \"tsc exit: $?\")"
     ]
   }
 }

@@ -1,3 +1,7 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Persona - Personal Website
 
 ## Tech Stack
@@ -5,11 +9,11 @@
 - **Framework**: Vite + React 19 + TypeScript
 - **Animation**: Motion (formerly Framer Motion)
 - **Maps**: MapLibre GL + react-map-gl (Traces section)
-- **Markdown**: react-markdown + remark-math + rehype-katex (LaTeX support)
+- **Markdown**: react-markdown + remark-gfm (tables) + remark-math + rehype-katex (LaTeX); mermaid for diagrams in project pages
 - **3D/WebGL**: Three.js (installed, currently unused)
 - **Styling**: CSS Modules with CSS variables (`src/styles/variables.css`)
 - **Linting**: oxlint
-- **Deployment target**: GitHub Pages (static build, base `/`)
+- **Deployment**: GitHub Pages (static build, base `/`) via `.github/workflows/deploy.yml` — builds and deploys automatically on push to `main`
 
 ## Commands
 
@@ -51,9 +55,9 @@ src/
 ├── content/              # SectionRouter (switches on category), SectionShell (layout wrapper)
 ├── routing/              # Hash routing: useHashRoute hook, parseHash/formatHash, slug utils
 ├── sections/
-│   ├── entry/            # Landing page
+│   ├── entry/            # Landing page (bio, favorites, motto wall — from entry.md)
 │   ├── tech/             # Project grid → ProjectCard → ProjectDetail
-│   ├── words/            # Article cards + reader view
+│   ├── words/            # "Voice" (articles + reader view) and "Index" (book library)
 │   ├── visuals/          # Image/video gallery
 │   └── traces/           # MapLibre map + places list
 ├── data/                 # Content loaders + content itself (see below)
@@ -79,7 +83,7 @@ One directory per project containing `project.md` plus colocated media (relative
 ```
 Title: <required>
 Subtitle: <optional>
-Year: <optional YYYY>
+Year: <optional YYYY or YYYY-MM; month refines sort only, display shows year>
 Tags: <optional, comma-separated>
 Thumbnail: <required filename>
 ThumbnailType: image | video   (auto-detected if omitted)
@@ -90,14 +94,25 @@ Markdown body...
 ```
 
 - Metadata is `Key: value` lines until the first blank line; body split into sections on `## ` headings
+- Body supports GFM tables and ` ```mermaid ` fenced blocks (rendered by `src/sections/tech/MermaidDiagram.tsx`, which lazy-loads mermaid on first use)
 - HTML comments are stripped (use to hide drafts)
-- Sort order: Year descending, then directory name ascending
+- Sort order: Year descending, then month descending (missing month sorts last within the year), then directory name ascending
 
-### Articles (`src/data/articles.ts` + `src/data/articles/*.md`)
+### Entry page (`src/data/entry.ts` + `src/data/entry.md`)
 
-- Metadata: `Title`, `Date` (YYYY-MM-DD), `Reading` (e.g. "8 min"), `Link` (optional external URL)
-- Body split on a lone `---` into excerpt (card preview) + full body (reader view)
-- Files starting with `_` are excluded; slug auto-generated from title
+`entry.md` is split into blocks on lone `---` lines, identified by content (not position): the block containing `Label: Value` lines is the favorites list (other lines in it become the lead-in sentence); blocks before it are bio paragraphs; each paragraph after it becomes a motto wall card.
+
+### Articles (`src/data/articles.ts`) — two authoring paths, merged and sorted by date
+
+- **Short**: `## Title` blocks inside `src/data/articles.md` (metadata lines under the heading)
+- **Long**: one file per essay in `src/data/articles/*.md`, with `Title:` in the front-matter; files starting with `_` are excluded
+- Metadata: `Title`, `Date` (YYYY-MM-DD, required — undated entries are dropped, which is how the `## Format` doc block in articles.md is filtered), `Reading` (e.g. "8 min"), `Link` (optional external URL)
+- Body split on a lone `---` into excerpt (card preview) + reader-only body; without `---`, only the first paragraph stays in the excerpt. A lone `<br>` line forces a section break in the reader. Slug auto-generated from title.
+
+### Books (`src/data/books.ts` + `src/data/books.md`) — the "Index" part of Words
+
+- Markdown tables (Title | Author | Finished | Note) grouped under `## Currently Reading` (pinned first), `## <year>` (descending), or `## Before <year>` (sorts just after that year); other headings ignored
+- Bilingual cells: `中文 / English` in Title or Author renders the CJK side prominent with the English alongside (English-only cells with slashes are untouched)
 
 ### Places (`src/data/places.md` + `places.cache.json`)
 
