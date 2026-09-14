@@ -30,14 +30,17 @@ Entries below are placeholders — replace with your own.
 
 | Title                     | Author                  | Finished | Note |
 |---------------------------|-------------------------|----------|------|
-| 西游记 / Journey to the West | 吴承恩 / Wu, Cheng'en  |          |      |
 | Finite and Infinite Games | Carse, James P.         |          |      |
+| Elon Musk                 | Isaacson, Walter        |          |      |
+| 悲剧的诞生 / The Birth of Tragedy | 尼采 / Nietzsche, Friedrich |          |      |
+| 孙子兵法 / The Art of War | 孙武 / Sun Tzu          |          |      |
 
 ## 2026
 
 | Title           | Author             | Finished | Note |
 |-----------------|--------------------|----------|------|
 | Steve Jobs      | Isaacson, Walter   |          |      |
+| 西游记 / Journey to the West | 吴承恩 / Wu, Cheng'en |          |      |
 | The Metamorphosis | Kafka, Franz     |          |      |
 
 ## Before 2026
