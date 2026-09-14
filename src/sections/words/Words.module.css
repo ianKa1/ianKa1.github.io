@@ -382,6 +382,17 @@
   margin-bottom: 0;
 }
 
+/* `### ` subheading when it leads a card excerpt — compact version of
+   the reader treatment. */
+.excerptHeading {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.15em;
+  letter-spacing: 0.06em;
+  color: var(--words-red-deep);
+  margin: 0 0 0.6rem 0;
+}
+
 /* Dropcap on the very first paragraph of the very first article. */
 .articleExcerpt p[data-paragraph="dropcap"]::first-letter {
   font-family: var(--font-display);
@@ -850,6 +861,26 @@
 .readerBreak {
   height: 1.75rem;
   margin: 0.25rem 0 1.55rem;
+}
+
+/* `### ` subheading inside an article body — italic display face in
+   the coral accent (echoing the drop cap) so section labels read as
+   markers, not body text. */
+.readerHeading {
+  font-family:
+    var(--font-display),
+    'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: var(--words-red-deep);
+  margin: 2.8rem 0 1.3rem;
+}
+
+.readerHeading:first-child {
+  margin-top: 0;
 }
 
 /* Drop-cap on the very first paragraph of the reader body — mirrors

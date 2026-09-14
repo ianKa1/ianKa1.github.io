@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { articles, SECTION_BREAK, type Article } from '../../data/articles';
+import { articles, SECTION_BREAK, SUB_HEADING, type Article } from '../../data/articles';
 import { bookGroups } from '../../data/books';
 import { SectionShell } from '../../content/SectionShell';
 import sectionStyles from '../../content/SectionShell.module.css';
@@ -199,9 +199,23 @@ function WordsBody({ articleSlug, onSelectArticle, onBack }: WordsProps) {
               </h3>
 
               <div className={styles.articleExcerpt}>
-                {article.excerpt.map((para, j) => (
-                  <p key={j} data-paragraph={j === 0 && i === 0 ? 'dropcap' : undefined}>{para}</p>
-                ))}
+                {article.excerpt.map((para, j) => {
+                  if (para.startsWith(SUB_HEADING)) {
+                    return (
+                      <p key={j} className={styles.excerptHeading}>
+                        {para.slice(SUB_HEADING.length)}
+                      </p>
+                    );
+                  }
+                  const firstRealIdx = article.excerpt.findIndex(
+                    (p) => p !== SECTION_BREAK && !p.startsWith(SUB_HEADING),
+                  );
+                  return (
+                    <p key={j} data-paragraph={j === firstRealIdx && i === 0 ? 'dropcap' : undefined}>
+                      {para}
+                    </p>
+                  );
+                })}
               </div>
 
               <div className={styles.articleFooter}>
@@ -325,11 +339,20 @@ function ArticleReader({ article, onBack }: { article: Article; onBack: () => vo
       <div className={styles.readerBody}>
         {(() => {
           // Track the index of the first real paragraph so the drop-cap
-          // lands on it (not on a section-break sentinel that may lead).
-          const firstRealIdx = paragraphs.findIndex((p) => p !== SECTION_BREAK);
+          // lands on it (not on a section-break or heading sentinel).
+          const firstRealIdx = paragraphs.findIndex(
+            (p) => p !== SECTION_BREAK && !p.startsWith(SUB_HEADING),
+          );
           return paragraphs.map((para, i) => {
             if (para === SECTION_BREAK) {
               return <div key={i} className={styles.readerBreak} aria-hidden="true" />;
+            }
+            if (para.startsWith(SUB_HEADING)) {
+              return (
+                <h2 key={i} className={styles.readerHeading}>
+                  {para.slice(SUB_HEADING.length)}
+                </h2>
+              );
             }
             return (
               <p key={i} data-paragraph={i === firstRealIdx ? 'dropcap' : undefined}>
