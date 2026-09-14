@@ -14,6 +14,7 @@ export interface VisualItem {
 }
 
 export const visuals: VisualItem[] = [
+  { src: '/images/visuals/c880dafcebe8292d52c0c1801a4eecb8.jpg', alt: 'Portrait with colors escaping the face' },
   { src: '/images/visuals/iankai_A_person_approach_the_end_of_universe._Make_the_general__4053deaa-927a-4ee6-9c95-b9d0fa399034.png', alt: 'End of universe' },
   { src: '/images/visuals/iankai_a_wolf_in_the_wilderness_--seed_3385666319_--sref_8121_23704ba8-3cc4-4660-aac5-72cfbf1ab67d_1.png', alt: 'Wolf in wilderness' },
   { src: '/images/visuals/2379d1fa-7da6-4d6c-9212-e15a21a3ab55.png', alt: 'Artwork' },
