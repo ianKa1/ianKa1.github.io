@@ -334,21 +334,19 @@
   margin-bottom: 0.85rem;
 }
 
+/* Same treatment as .readerTitle — every card mirrors the full-article
+   page: italic display title, drop-cap on the intro. */
 .articleTitle {
   font-family:
     var(--font-display),
     'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
   font-weight: 400;
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-style: italic;
+  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
   line-height: 1.15;
   letter-spacing: -0.015em;
   color: var(--text-primary);
   margin: 0 0 1.25rem 0;
-}
-
-.article[data-first] .articleTitle {
-  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
-  font-style: italic;
 }
 
 .articleTitle a {
@@ -382,18 +380,7 @@
   margin-bottom: 0;
 }
 
-/* `### ` subheading when it leads a card excerpt — compact version of
-   the reader treatment. */
-.excerptHeading {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 1.15em;
-  letter-spacing: 0.06em;
-  color: var(--words-red-deep);
-  margin: 0 0 0.6rem 0;
-}
-
-/* Dropcap on the very first paragraph of the very first article. */
+/* Dropcap on the first paragraph of every card — mirrors the reader. */
 .articleExcerpt p[data-paragraph="dropcap"]::first-letter {
   font-family: var(--font-display);
   font-style: normal;

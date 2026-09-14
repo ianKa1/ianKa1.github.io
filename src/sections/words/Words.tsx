@@ -173,7 +173,6 @@ function WordsBody({ articleSlug, onSelectArticle, onBack }: WordsProps) {
             <motion.li
               key={article.title}
               className={styles.article}
-              data-first={i === 0 || undefined}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.4, 0, 0.2, 1] }}
@@ -199,23 +198,16 @@ function WordsBody({ articleSlug, onSelectArticle, onBack }: WordsProps) {
               </h3>
 
               <div className={styles.articleExcerpt}>
-                {article.excerpt.map((para, j) => {
-                  if (para.startsWith(SUB_HEADING)) {
-                    return (
-                      <p key={j} className={styles.excerptHeading}>
-                        {para.slice(SUB_HEADING.length)}
-                      </p>
-                    );
-                  }
-                  const firstRealIdx = article.excerpt.findIndex(
-                    (p) => p !== SECTION_BREAK && !p.startsWith(SUB_HEADING),
-                  );
-                  return (
-                    <p key={j} data-paragraph={j === firstRealIdx && i === 0 ? 'dropcap' : undefined}>
+                {/* Cards show prose only — subheadings and section breaks
+                    are reader-view furniture, and skipping them keeps
+                    every card's preview looking the same. */}
+                {article.excerpt
+                  .filter((p) => p !== SECTION_BREAK && !p.startsWith(SUB_HEADING))
+                  .map((para, j) => (
+                    <p key={j} data-paragraph={j === 0 ? 'dropcap' : undefined}>
                       {para}
                     </p>
-                  );
-                })}
+                  ))}
               </div>
 
               <div className={styles.articleFooter}>
