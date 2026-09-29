@@ -29,7 +29,29 @@ function mermaidSource(pre: Element | undefined): string | null {
   return text?.type === 'text' ? text.value : null;
 }
 
+/* Video files authored as `![alt](clip.mp4)` arrive here as <img> nodes
+   with a video URL (the loader resolves any colocated media the same
+   way). Swap them for a <video> element so they actually play. */
+function isVideoUrl(src: string): boolean {
+  return /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/i.test(src);
+}
+
 const markdownComponents: Components = {
+  img({ node: _node, src, alt, ...props }) {
+    if (typeof src === 'string' && isVideoUrl(src)) {
+      return (
+        <video
+          src={src}
+          className={styles.bodyVideo}
+          controls
+          playsInline
+          preload="metadata"
+          aria-label={alt}
+        />
+      );
+    }
+    return <img src={src} alt={alt} {...props} />;
+  },
   pre({ node, children, ...props }) {
     const chart = mermaidSource(node);
     if (chart) return <MermaidDiagram chart={chart} />;

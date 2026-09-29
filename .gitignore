@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Raw source media kept out of the bundle (Vite globs everything under src/data/projects)
+raw-media

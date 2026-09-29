@@ -224,6 +224,17 @@
   display: block;
 }
 
+/* Videos embedded in the body (`![](clip.mp4)`) are usually portrait
+   screen recordings; cap their height and center them so they read as
+   a phone in the column rather than a wall of pixels. */
+.markdown .bodyVideo {
+  display: block;
+  margin: 1.5rem auto;
+  max-width: 100%;
+  max-height: min(72vh, 680px);
+  border-radius: 4px;
+}
+
 /* Multiple images inside a single paragraph render as a wrapping flex
    row so authors can group figures (e.g. `![](a)![](b)![](c)`) into a
    grid. Single-image paragraphs stay full width. */
