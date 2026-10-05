@@ -75,8 +75,14 @@
   max-width: 600px;
 }
 
+/* Shrink-wrap the media so the frame (and its shadow) hugs the video
+   instead of spanning the full column; portrait phone recordings then
+   sit centered at their natural aspect rather than being cropped to a
+   horizontal slice by `object-fit: cover`. */
 .hero {
-  margin-bottom: 3rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 3rem;
   border-radius: 8px;
   overflow: hidden;
   box-shadow:
@@ -85,11 +91,11 @@
 }
 
 .heroMedia {
-  width: 100%;
-  height: auto;
   display: block;
-  max-height: 60vh;
-  object-fit: cover;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 70vh;
 }
 
 .content {

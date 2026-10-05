@@ -2,7 +2,7 @@ Title: AI Readings
 Subtitle: Not a source of answers, but a new way to reflect
 Year: 2026-09
 Tags: Astrology, Prompt Engineering
-Thumbnail: thumbnail.mp4
+Thumbnail: recording.mp4
 Cover: cover.jpg
 
 ## Overview
